@@ -2109,7 +2109,8 @@ func reconcileHarnessConstraint(db *sql.DB) error {
 	needsOpenHands := !strings.Contains(schema, "'openhands'")
 	needsMemcode := !strings.Contains(schema, "'memcode'")
 	needsCommandCode := !strings.Contains(schema, "'command-code'")
-	if !needsMuse && !needsKimchi && !needsPrimeAgent && !needsOMP && !needsGemini && !needsUnreal && !needsCodewhale && !needsMiMo && !needsDeepSeek && !needsOpenHands && !needsCommandCode && !needsMemcode {
+	needsMage := !strings.Contains(schema, "'mage'")
+	if !needsMuse && !needsKimchi && !needsPrimeAgent && !needsOMP && !needsGemini && !needsUnreal && !needsCodewhale && !needsMiMo && !needsDeepSeek && !needsOpenHands && !needsCommandCode && !needsMemcode && !needsMage {
 		return nil
 	}
 	if _, err := db.Exec(`PRAGMA writable_schema = ON`); err != nil {
@@ -2226,6 +2227,13 @@ func reconcileHarnessConstraint(db *sql.DB) error {
 	if needsMemcode {
 		repairs = append(repairs, replacement{"'fake'))", "'memcode', 'fake'))"})
 	}
+	if needsMage {
+		// Migration 0213 rewrites the constraint by anchoring on the retained
+		// 'fake' fixture harness, for the same reason as the harnesses above.
+		// This runs last, so a database missing several harnesses gets them in
+		// declaration order ending with 'mage', 'fake'.
+		repairs = append(repairs, replacement{"'fake'))", "'mage', 'fake'))"})
+	}
 	for _, r := range repairs {
 		if _, err := db.Exec(
 			`UPDATE sqlite_master
@@ -2280,6 +2288,9 @@ WHERE type = 'table' AND name = 'sessions'`,
 	}
 	if !strings.Contains(schema, "'memcode'") {
 		return fmt.Errorf("schema repair: sessions harness constraint is missing Memcode and did not match known pre-Memcode schema")
+	}
+	if !strings.Contains(schema, "'mage'") {
+		return fmt.Errorf("schema repair: sessions harness constraint is missing Mage and did not match known pre-Mage schema")
 	}
 	return nil
 }

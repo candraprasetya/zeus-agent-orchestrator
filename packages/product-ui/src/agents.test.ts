@@ -12,4 +12,14 @@ describe("agent identities", () => {
 			logoKey: "opencode-v2",
 		});
 	});
+
+	it("lists Mage as its own worker option", () => {
+		expect(AGENT_OPTIONS).toContain("mage");
+		expect(agentLabel("mage")).toBe("Mage");
+		expect(getAgentIdentity("mage")).toMatchObject({
+			id: "mage",
+			label: "Mage",
+			logoKey: "mage",
+		});
+	});
 });

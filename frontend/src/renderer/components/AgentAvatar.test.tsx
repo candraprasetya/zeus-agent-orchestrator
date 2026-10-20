@@ -5,6 +5,8 @@ import fxDarkLogo from "../assets/agents/fx-dark.svg";
 import fxLightLogo from "../assets/agents/fx-light.svg";
 import geminiLogo from "../assets/agents/gemini.svg";
 import memcodeLogo from "../assets/agents/memcode.png";
+import mageDarkLogo from "../assets/agents/mage-dark.svg";
+import mageLightLogo from "../assets/agents/mage-light.svg";
 import unrealAgentDarkLogo from "../assets/agents/unreal-agent-dark.png";
 import unrealAgentLightLogo from "../assets/agents/unreal-agent-light.png";
 
@@ -22,6 +24,12 @@ describe("AgentAvatar", () => {
 		render(<AgentAvatar provider="fx" />);
 
 		expect(themeSources("fx")).toEqual([fxLightLogo, fxDarkLogo]);
+	});
+
+	it("renders the Mage light and dark marks", () => {
+		render(<AgentAvatar provider="mage" />);
+
+		expect(themeSources("mage")).toEqual([mageLightLogo, mageDarkLogo]);
 	});
 
 	it("renders a single mark when the brand reads on both themes", () => {

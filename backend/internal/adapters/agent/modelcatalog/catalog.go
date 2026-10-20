@@ -111,6 +111,9 @@ var commandSpecs = map[string]commandSpec{
 	// betting on a flag that can be rejected.
 	"opencode":    {args: []string{"models"}, parser: parseProviderIDLines},
 	"opencode-v2": {args: []string{"models"}, parser: parseProviderIDLines},
+	// mage ships the opencode `models` subcommand; its output is one
+	// provider/model id per line.
+	"mage":        {args: []string{"models"}, parser: parseProviderIDLines},
 	"grok":        {args: []string{"models"}, parser: parseGrokModels},
 	"cursor":      {args: []string{"models"}, parser: parseCursorModels},
 	"agy":         {args: []string{"models"}, parser: parseAgyModels},
@@ -233,7 +236,7 @@ func Manual(agentID string) ports.AgentModelCatalog {
 func customModelEntryMode(agentID string) ports.CustomModelEntryMode {
 	switch agentID {
 	case "claude-code", "codex", "opencode", "opencode-v2", "grok", "cursor", "qwen", "gemini",
-		"kimi", "muse", "aider", "goose", "autohand", "fx", "unreal-agent", "codewhale", "mimo-code", "deepseek-harness", "openhands", "devin":
+		"kimi", "muse", "aider", "goose", "autohand", "fx", "unreal-agent", "codewhale", "mimo-code", "deepseek-harness", "openhands", "devin", "mage":
 		return ports.CustomModelEntryDirect
 	case "continue", "cline", "kilocode", "vibe", "pi", "kimchi", "prime-agent":
 		return ports.CustomModelEntryConfigured

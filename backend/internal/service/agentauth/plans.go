@@ -21,6 +21,7 @@ var plans = []Plan{
 	plan("cursor", ActionLogin, "Log in to Cursor", []string{"cursor-agent", "login"}, "Native browser flow", "https://docs.cursor.com/en/cli/installation"),
 	plan("opencode", ActionLogin, "Log in to OpenCode", []string{"opencode", "auth", "login"}, "Native provider chooser", "https://github.com/anomalyco/opencode"),
 	plan("opencode-v2", ActionLogin, "Log in to OpenCode 2", []string{"opencode", "auth", "login"}, "Native provider chooser", "https://opencode.ai/v2/docs"),
+	plan("mage", ActionLogin, "Log in to Mage", []string{"mage", "auth", "login"}, "Native provider chooser", "https://www.npmjs.com/package/@mybcabisnis/mage"),
 	plan("mimo-code", ActionLogin, "Log in to MiMo Code", []string{"mimo", "auth", "login"}, "Native provider chooser", "https://mimo.mi.com/docs/en-US/tokenplan/integration/mimo-code"),
 	documentationPlan("memcode", ActionSetup, "Set up memcode", "Configure a native endpoint and provider credentials before launching AO", "https://github.com/memcode-ai/memcode"),
 	documentationPlan("aider", ActionSetup, "Set up Aider", "Configure provider credentials using Aider's documented environment or configuration-file options", "https://aider.chat/docs/config/api-keys.html"),
@@ -180,6 +181,8 @@ func logoutCommand(agentID string) []string {
 		return []string{"cursor-agent", "logout"}
 	case "opencode", "opencode-v2":
 		return []string{"opencode", "auth", "logout"}
+	case "mage":
+		return []string{"mage", "auth", "logout"}
 	case "amp":
 		return []string{"amp", "logout"}
 	case "auggie":

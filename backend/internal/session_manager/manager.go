@@ -5849,6 +5849,7 @@ func systemPromptFileRequired(harness domain.AgentHarness) bool {
 		domain.HarnessCommandCode,
 		domain.HarnessKiro,
 		domain.HarnessOpenCode,
+		domain.HarnessMage,
 		domain.HarnessCopilot,
 		domain.HarnessVibe,
 		domain.HarnessOpenHands:

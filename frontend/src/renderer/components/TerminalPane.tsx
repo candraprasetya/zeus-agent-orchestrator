@@ -1015,10 +1015,10 @@ function reviewerPreviewLines(session: WorkspaceSession | undefined): string[] {
 // Agents whose full-screen TUI keeps its own transcript and scrolls it only by
 // keyboard, ignoring SGR wheel reports. The terminal routes the wheel to
 // PageUp/PageDown for these (see XtermTerminal's paneScrollsByKeyboard).
-// kilocode and MiMo Code share opencode's TUI lineage; grok also uses a
+// kilocode, MiMo Code, and mage share opencode's TUI lineage; grok also uses a
 // full-screen keyboard-scroll TUI, so all scroll the same way. Muse Code uses
 // the normal terminal buffer instead and must keep the SGR -> tmux scroll path.
-const KEYBOARD_SCROLL_PROVIDERS = new Set(["opencode", "opencode-v2", "kilocode", "grok", "mimo-code"]);
+const KEYBOARD_SCROLL_PROVIDERS = new Set(["opencode", "opencode-v2", "kilocode", "grok", "mimo-code", "mage"]);
 
 // Whether the given provider's TUI is one of the keyboard-scroll agents above.
 export function providerScrollsByKeyboard(provider?: string): boolean {

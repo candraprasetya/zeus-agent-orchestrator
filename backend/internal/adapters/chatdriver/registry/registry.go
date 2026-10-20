@@ -20,6 +20,7 @@ import (
 	"github.com/aoagents/agent-orchestrator/backend/internal/adapters/agent/droid"
 	"github.com/aoagents/agent-orchestrator/backend/internal/adapters/agent/kimchi"
 	"github.com/aoagents/agent-orchestrator/backend/internal/adapters/agent/kimi"
+	"github.com/aoagents/agent-orchestrator/backend/internal/adapters/agent/mage"
 	"github.com/aoagents/agent-orchestrator/backend/internal/adapters/agent/omp"
 	"github.com/aoagents/agent-orchestrator/backend/internal/adapters/agent/opencode"
 	"github.com/aoagents/agent-orchestrator/backend/internal/adapters/agent/opencodev2"
@@ -36,6 +37,7 @@ import (
 	"github.com/aoagents/agent-orchestrator/backend/internal/adapters/chatdriver/droidacp"
 	"github.com/aoagents/agent-orchestrator/backend/internal/adapters/chatdriver/kimchiacp"
 	"github.com/aoagents/agent-orchestrator/backend/internal/adapters/chatdriver/kimiacp"
+	"github.com/aoagents/agent-orchestrator/backend/internal/adapters/chatdriver/mageacp"
 	"github.com/aoagents/agent-orchestrator/backend/internal/adapters/chatdriver/ompacp"
 	"github.com/aoagents/agent-orchestrator/backend/internal/adapters/chatdriver/opencodeacp"
 	"github.com/aoagents/agent-orchestrator/backend/internal/adapters/chatdriver/opencodev2acp"
@@ -85,6 +87,7 @@ func Build(log *slog.Logger, onClaudeAuthRejected func()) *Registry {
 		claudeacp.New(claudecode.New(), log, onClaudeAuthRejected),
 		opencodeacp.New(opencode.New(), log),
 		opencodev2acp.New(opencodev2.New(), log),
+		mageacp.New(mage.New(), log),
 		droidacp.New(droid.New(), log),
 		kimiacp.New(kimi.New(), log),
 		kimchiacp.New(kimchi.New(), log),

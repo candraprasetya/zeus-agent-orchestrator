@@ -48,6 +48,7 @@ var agentDocumentationURLs = map[Target]string{
 	TargetDeepSeek:    "https://github.com/deepseek-ai/deepseek-harness",
 	TargetOpenHands:   "https://docs.openhands.dev/openhands/usage/cli/installation",
 	TargetCommandCode: "https://commandcode.ai/docs/quickstart",
+	TargetMage:        "https://www.npmjs.com/package/@mybcabisnis/mage",
 }
 
 func (s requestPlanner) agentMethodPlans(target Target, operation AgentOperation) []Plan {
@@ -274,6 +275,10 @@ func (s requestPlanner) agentMethodPlans(target Target, operation AgentOperation
 		}
 	case TargetCommandCode:
 		plans = []Plan{s.planNPM(target, "command-code")}
+	case TargetMage:
+		// mage ships as one Bun-compiled Node CLI (opencode-compatible), so npm
+		// is the only install method it documents.
+		plans = []Plan{s.planNPM(target, "@mybcabisnis/mage")}
 	default:
 		plans = []Plan{{Target: target, Unsupported: true, Method: "manual", Reason: "unknown install target"}}
 	}

@@ -49,6 +49,8 @@ import kiroLogo from "../assets/agents/kiro.svg";
 import museLogo from "../assets/agents/muse.svg";
 import mimoCodeLogo from "../assets/agents/mimo-code.svg";
 import memcodeLogo from "../assets/agents/memcode.png";
+import mageDarkLogo from "../assets/agents/mage-dark.svg";
+import mageLightLogo from "../assets/agents/mage-light.svg";
 import ompLogo from "../assets/agents/omp.svg";
 import openhandsDarkLogo from "../assets/agents/openhands-dark.svg";
 import openhandsLightLogo from "../assets/agents/openhands-light.svg";
@@ -77,6 +79,7 @@ const LOGOS: AgentLogoSources = {
 	cursor: { light: cursorLightLogo, dark: cursorDarkLogo },
 	opencode: { light: opencodeLightLogo, dark: opencodeDarkLogo },
 	"opencode-v2": { light: opencodeLightLogo, dark: opencodeDarkLogo },
+	mage: { light: mageLightLogo, dark: mageDarkLogo },
 	copilot: { light: copilotLightLogo, dark: copilotDarkLogo },
 	aider: aiderLogo,
 	grok: { light: grokLightLogo, dark: grokDarkLogo },

@@ -15561,6 +15561,7 @@ components:
           - openhands
           - command-code
           - memcode
+          - mage
           - fake
           type: string
         approvalMode:
@@ -16259,6 +16260,7 @@ components:
           - openhands
           - command-code
           - memcode
+          - mage
           - cloudflared
           type: string
         updatedAt:
@@ -19428,6 +19430,7 @@ components:
           - openhands
           - command-code
           - memcode
+          - mage
           type: string
         issueId:
           type: string
