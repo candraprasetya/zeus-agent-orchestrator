@@ -99,6 +99,43 @@ func TestPrepareV2DataHomeDoesNotCopyOrphanedRollbackJournal(t *testing.T) {
 	}
 }
 
+func TestPrepareV2DataHomeMigratesSymlinks(t *testing.T) {
+	parent := t.TempDir()
+	t.Setenv("XDG_DATA_HOME", parent)
+	legacy := filepath.Join(parent, "opencode")
+	if err := os.MkdirAll(filepath.Join(legacy, "bin", "node_modules", ".bin"), 0o700); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(legacy, "auth.json"), []byte("{}"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	// npm-style relative bin shim, like the ones OpenCode 1 leaves behind.
+	if err := os.Symlink("../prettier/bin/prettier.cjs", filepath.Join(legacy, "bin", "node_modules", ".bin", "prettier")); err != nil {
+		t.Fatal(err)
+	}
+	// Absolute targets are legal link data and must be preserved verbatim.
+	if err := os.Symlink("/etc/hosts", filepath.Join(legacy, "absolute")); err != nil {
+		t.Fatal(err)
+	}
+
+	home, err := PrepareV2DataHome(context.Background())
+	if err != nil {
+		t.Fatal(err)
+	}
+	for path, want := range map[string]string{
+		filepath.Join(home, "opencode", "bin", "node_modules", ".bin", "prettier"): "../prettier/bin/prettier.cjs",
+		filepath.Join(home, "opencode", "absolute"):                                "/etc/hosts",
+	} {
+		got, err := os.Readlink(path)
+		if err != nil {
+			t.Fatalf("migrated symlink %s: %v", path, err)
+		}
+		if got != want {
+			t.Fatalf("migrated symlink %s target = %q, want %q", path, got, want)
+		}
+	}
+}
+
 func TestPrepareV2DataHomeStopsWaitingForMigrationLockOnCancel(t *testing.T) {
 	parent := t.TempDir()
 	t.Setenv("XDG_DATA_HOME", parent)

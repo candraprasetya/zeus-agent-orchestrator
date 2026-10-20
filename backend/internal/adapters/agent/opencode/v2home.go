@@ -153,6 +153,13 @@ func copyTree(ctx context.Context, source, destination string) error {
 		if relative == "opencode.db" || relative == "opencode.db-wal" || relative == "opencode.db-shm" || relative == "opencode.db-journal" {
 			return nil
 		}
+		if info.Mode()&os.ModeSymlink != 0 {
+			target, err := sourceRoot.Readlink(relative)
+			if err != nil {
+				return err
+			}
+			return destinationRoot.Symlink(target, relative)
+		}
 		if !info.Mode().IsRegular() {
 			return fmt.Errorf("unsupported legacy data entry %q", path)
 		}
