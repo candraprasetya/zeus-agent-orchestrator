@@ -11,6 +11,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"strings"
 	"time"
 )
 
@@ -80,8 +81,8 @@ type ExpoClient struct {
 func NewExpoClient(accessToken string) *ExpoClient {
 	return &ExpoClient{
 		http:        &http.Client{Timeout: 15 * time.Second},
-		sendURL:     expoSendURL,
-		receiptsURL: expoReceiptsURL,
+		sendURL:     "",
+		receiptsURL: "",
 		accessToken: accessToken,
 	}
 }
@@ -118,6 +119,9 @@ func isRetryable(err error) bool {
 // keeps failing aborts and is returned; tickets from earlier batches are still
 // returned.
 func (c *ExpoClient) Send(ctx context.Context, messages []Message) ([]Ticket, error) {
+	if c.sendURL == "" || strings.HasPrefix(c.sendURL, "https://exp.host") {
+		return nil, nil
+	}
 	tickets := make([]Ticket, 0, len(messages))
 	for start := 0; start < len(messages); start += maxBatch {
 		end := start + maxBatch
@@ -184,6 +188,9 @@ func (c *ExpoClient) sendBatch(ctx context.Context, batch []Message) ([]Ticket, 
 // getReceipts cap). Returns a map keyed by ticket id; ids with no receipt yet are
 // simply absent.
 func (c *ExpoClient) GetReceipts(ctx context.Context, ids []string) (map[string]Receipt, error) {
+	if c.receiptsURL == "" || strings.HasPrefix(c.receiptsURL, "https://exp.host") {
+		return make(map[string]Receipt), nil
+	}
 	out := make(map[string]Receipt, len(ids))
 	for start := 0; start < len(ids); start += maxReceiptBatch {
 		end := start + maxReceiptBatch
@@ -217,6 +224,9 @@ func (c *ExpoClient) GetReceipts(ctx context.Context, ids []string) (map[string]
 }
 
 func (c *ExpoClient) post(ctx context.Context, url string, body []byte) (*http.Response, error) {
+	if url == "" || strings.HasPrefix(url, "https://exp.host") {
+		return nil, errors.New("external push service disabled")
+	}
 	req, err := http.NewRequestWithContext(ctx, http.MethodPost, url, bytes.NewReader(body))
 	if err != nil {
 		return nil, err

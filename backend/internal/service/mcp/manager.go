@@ -24,6 +24,26 @@ func New(homeDir string) *Manager {
 	return &Manager{homeDir: homeDir}
 }
 
+func normalizeHarness(h string) string {
+	h = strings.ToLower(strings.TrimSpace(h))
+	switch h {
+	case "opencode", "opencode-1", "opencode1":
+		return "opencode"
+	case "opencode-v2", "opencode2", "opencodev2":
+		return "opencode-v2"
+	case "claude", "claude-code", "claudecode":
+		return "claude-code"
+	case "cursor":
+		return "cursor"
+	case "mage":
+		return "mage"
+	case "agy", "antigravity":
+		return "agy"
+	default:
+		return h
+	}
+}
+
 func (m *Manager) opencodeConfigPath() string {
 	primary := filepath.Join(m.homeDir, ".config", "opencode", "opencode.json")
 	if _, err := os.Stat(primary); err == nil {
@@ -56,11 +76,15 @@ func (m *Manager) claudeConfigPath() string {
 	return filepath.Join(m.homeDir, ".claude.json")
 }
 
+func (m *Manager) cursorConfigPath() string {
+	return filepath.Join(m.homeDir, ".cursor", "mcp.json")
+}
+
 func (m *Manager) List(ctx context.Context, harness string) ([]ServerConfig, error) {
 	m.mu.RLock()
 	defer m.mu.RUnlock()
 
-	target := strings.ToLower(strings.TrimSpace(harness))
+	target := normalizeHarness(harness)
 	var results []ServerConfig
 
 	if target == "" || target == "all" || target == "opencode" {
@@ -68,6 +92,15 @@ func (m *Manager) List(ctx context.Context, harness string) ([]ServerConfig, err
 		if err == nil {
 			results = append(results, items...)
 		} else if !errors.Is(err, os.ErrNotExist) && target == "opencode" {
+			return nil, err
+		}
+	}
+
+	if target == "all" || target == "opencode-v2" {
+		items, err := m.listOpencodeCompatible(m.opencodeConfigPath(), "opencode-v2")
+		if err == nil {
+			results = append(results, items...)
+		} else if !errors.Is(err, os.ErrNotExist) && target == "opencode-v2" {
 			return nil, err
 		}
 	}
@@ -90,13 +123,29 @@ func (m *Manager) List(ctx context.Context, harness string) ([]ServerConfig, err
 		}
 	}
 
-	if target == "all" || target == "claude" {
+	if target == "all" || target == "claude-code" {
 		items, err := m.listClaude()
 		if err == nil {
 			results = append(results, items...)
-		} else if !errors.Is(err, os.ErrNotExist) && target == "claude" {
+		} else if !errors.Is(err, os.ErrNotExist) && target == "claude-code" {
 			return nil, err
 		}
+	}
+
+	if target == "all" || target == "cursor" {
+		items, err := m.listMcpServersCompatible(m.cursorConfigPath(), "cursor")
+		if err == nil {
+			results = append(results, items...)
+		} else if !errors.Is(err, os.ErrNotExist) && target == "cursor" {
+			return nil, err
+		}
+	}
+
+	// For specific non-built-in target, check ~/.config/<target>/mcp.json
+	if target != "" && target != "all" && target != "opencode" && target != "opencode-v2" && target != "mage" && target != "agy" && target != "claude-code" && target != "cursor" {
+		cfgPath := filepath.Join(m.homeDir, ".config", target, "mcp.json")
+		items, _ := m.listMcpServersCompatible(cfgPath, target)
+		results = append(results, items...)
 	}
 
 	return results, nil
@@ -230,7 +279,10 @@ func (m *Manager) listAgy() ([]ServerConfig, error) {
 }
 
 func (m *Manager) listClaude() ([]ServerConfig, error) {
-	cfgPath := m.claudeConfigPath()
+	return m.listMcpServersCompatible(m.claudeConfigPath(), "claude-code")
+}
+
+func (m *Manager) listMcpServersCompatible(cfgPath, harnessName string) ([]ServerConfig, error) {
 	data, err := os.ReadFile(cfgPath)
 	if err != nil {
 		return nil, err
@@ -253,23 +305,33 @@ func (m *Manager) listClaude() ([]ServerConfig, error) {
 			continue
 		}
 
+		url, _ := serverMap["url"].(string)
+		srvType := "local"
+		if url != "" {
+			srvType = "remote"
+		}
+
 		cfg := ServerConfig{
 			Name:       name,
-			Harness:    "claude",
-			Type:       "local",
+			Harness:    harnessName,
+			Type:       srvType,
+			URL:        url,
 			ConfigPath: cfgPath,
 			Enabled:    true,
 		}
-		cfg.Command, _ = serverMap["command"].(string)
-		if args, ok := serverMap["args"].([]any); ok {
-			for _, a := range args {
-				cfg.Args = append(cfg.Args, fmt.Sprint(a))
+
+		if srvType == "local" {
+			cfg.Command, _ = serverMap["command"].(string)
+			if args, ok := serverMap["args"].([]any); ok {
+				for _, a := range args {
+					cfg.Args = append(cfg.Args, fmt.Sprint(a))
+				}
 			}
-		}
-		if envMap, ok := serverMap["env"].(map[string]any); ok {
-			cfg.Env = make(map[string]string, len(envMap))
-			for k, v := range envMap {
-				cfg.Env[k] = fmt.Sprint(v)
+			if envMap, ok := serverMap["env"].(map[string]any); ok {
+				cfg.Env = make(map[string]string, len(envMap))
+				for k, v := range envMap {
+					cfg.Env[k] = fmt.Sprint(v)
+				}
 			}
 		}
 
@@ -287,7 +349,7 @@ func (m *Manager) Add(ctx context.Context, req AddServerRequest) (ServerConfig, 
 		return ServerConfig{}, errors.New("server name is required")
 	}
 
-	harness := strings.ToLower(strings.TrimSpace(req.Harness))
+	harness := normalizeHarness(req.Harness)
 	if harness == "" {
 		harness = "opencode"
 	}
@@ -302,14 +364,19 @@ func (m *Manager) Add(ctx context.Context, req AddServerRequest) (ServerConfig, 
 	switch harness {
 	case "opencode":
 		return m.addOpencodeCompatible(m.opencodeConfigPath(), "opencode", name, srvType, req)
+	case "opencode-v2":
+		return m.addOpencodeCompatible(m.opencodeConfigPath(), "opencode-v2", name, srvType, req)
 	case "mage":
 		return m.addOpencodeCompatible(m.mageConfigPath(), "mage", name, srvType, req)
 	case "agy":
 		return m.addAgy(name, srvType, req)
-	case "claude":
-		return m.addClaude(name, srvType, req)
+	case "claude-code":
+		return m.addMcpServersCompatible(m.claudeConfigPath(), "claude-code", name, srvType, req)
+	case "cursor":
+		return m.addMcpServersCompatible(m.cursorConfigPath(), "cursor", name, srvType, req)
 	default:
-		return ServerConfig{}, fmt.Errorf("unsupported harness: %s", harness)
+		cfgPath := filepath.Join(m.homeDir, ".config", harness, "mcp.json")
+		return m.addMcpServersCompatible(cfgPath, harness, name, srvType, req)
 	}
 }
 
@@ -417,8 +484,7 @@ func (m *Manager) addAgy(name, srvType string, req AddServerRequest) (ServerConf
 	}, nil
 }
 
-func (m *Manager) addClaude(name, srvType string, req AddServerRequest) (ServerConfig, error) {
-	cfgPath := m.claudeConfigPath()
+func (m *Manager) addMcpServersCompatible(cfgPath, harnessName, name, srvType string, req AddServerRequest) (ServerConfig, error) {
 	var root map[string]any
 
 	data, err := os.ReadFile(cfgPath)
@@ -435,10 +501,17 @@ func (m *Manager) addClaude(name, srvType string, req AddServerRequest) (ServerC
 		root["mcpServers"] = mcpVal
 	}
 
-	serverEntry := map[string]any{
-		"command": req.Command,
-		"args":    req.Args,
-		"env":     req.Env,
+	serverEntry := make(map[string]any)
+	if srvType == "remote" {
+		serverEntry["url"] = req.URL
+	} else {
+		serverEntry["command"] = req.Command
+		serverEntry["args"] = req.Args
+		if len(req.Env) > 0 {
+			serverEntry["env"] = req.Env
+		} else {
+			serverEntry["env"] = map[string]string{}
+		}
 	}
 
 	mcpVal[name] = serverEntry
@@ -449,10 +522,11 @@ func (m *Manager) addClaude(name, srvType string, req AddServerRequest) (ServerC
 
 	return ServerConfig{
 		Name:       name,
-		Harness:    "claude",
+		Harness:    harnessName,
 		Type:       srvType,
 		Command:    req.Command,
 		Args:       req.Args,
+		URL:        req.URL,
 		Env:        req.Env,
 		ConfigPath: cfgPath,
 		Enabled:    true,
@@ -468,7 +542,7 @@ func (m *Manager) Delete(ctx context.Context, harness, name string) error {
 		return errors.New("server name is required")
 	}
 
-	harness = strings.ToLower(strings.TrimSpace(harness))
+	harness = normalizeHarness(harness)
 	if harness == "" {
 		harness = "opencode"
 	}
@@ -476,14 +550,19 @@ func (m *Manager) Delete(ctx context.Context, harness, name string) error {
 	switch harness {
 	case "opencode":
 		return deleteFromJSONKey(m.opencodeConfigPath(), "mcp", name)
+	case "opencode-v2":
+		return deleteFromJSONKey(m.opencodeConfigPath(), "mcp", name)
 	case "mage":
 		return deleteFromJSONKey(m.mageConfigPath(), "mcp", name)
 	case "agy":
 		return deleteFromJSONKey(m.agyConfigPath(), "mcpServers", name)
-	case "claude":
+	case "claude-code":
 		return deleteFromJSONKey(m.claudeConfigPath(), "mcpServers", name)
+	case "cursor":
+		return deleteFromJSONKey(m.cursorConfigPath(), "mcpServers", name)
 	default:
-		return fmt.Errorf("unsupported harness: %s", harness)
+		cfgPath := filepath.Join(m.homeDir, ".config", harness, "mcp.json")
+		return deleteFromJSONKey(cfgPath, "mcpServers", name)
 	}
 }
 

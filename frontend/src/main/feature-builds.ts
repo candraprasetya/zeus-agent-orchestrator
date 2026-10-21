@@ -135,64 +135,7 @@ async function isPrOpen(pr: number): Promise<boolean> {
  * tell "no live builds" apart from "could not reach GitHub".
  */
 async function collectFeatureBuilds(): Promise<FeatureBuild[]> {
-	const { owner, repo } = resolveRepo();
-	// Fetch up to 100 releases; feature builds are always recent so this is plenty.
-	const releases = await fetchJson<GitHubRelease[]>(`${GITHUB_API}/repos/${owner}/${repo}/releases?per_page=100`);
-
-	const now = Date.now();
-	const cutoff = now - MAX_AGE_MS;
-
-	// Parse candidates: prerelease, within age window, valid marker.
-	interface Candidate extends FeatureBuild {
-		publishedMs: number;
-	}
-
-	const candidates: Candidate[] = [];
-	for (const rel of releases) {
-		if (!rel.prerelease) continue;
-		const publishedMs = new Date(rel.published_at).getTime();
-		if (publishedMs < cutoff) continue;
-		const body = rel.body ?? "";
-		const marker = parseMarker(body);
-		if (!marker) continue;
-		candidates.push({
-			pr: marker.pr,
-			title: rel.name,
-			base: marker.base,
-			sha: marker.sha,
-			slug: marker.slug,
-			buildId: rel.tag_name,
-			publishedAt: rel.published_at,
-			publishedMs,
-		});
-	}
-
-	if (candidates.length === 0) return [];
-
-	// Dedupe PR numbers for the open-state batch check.
-	const uniquePrs = [...new Set(candidates.map((c) => c.pr))];
-	const openMap = new Map<number, boolean>();
-	await Promise.all(
-		uniquePrs.map(async (pr) => {
-			openMap.set(pr, await isPrOpen(pr));
-		}),
-	);
-
-	// Keep only open PRs, then group by PR keeping the newest build per PR.
-	const bestByPr = new Map<number, Candidate>();
-	for (const c of candidates) {
-		if (!openMap.get(c.pr)) continue;
-		const existing = bestByPr.get(c.pr);
-		if (!existing || c.publishedMs > existing.publishedMs) {
-			bestByPr.set(c.pr, c);
-		}
-	}
-
-	// Sort newest-first by publishedMs.
-	const results = [...bestByPr.values()].sort((a, b) => b.publishedMs - a.publishedMs);
-
-	// Strip the internal publishedMs field before returning.
-	return results.map(({ publishedMs: _ms, ...rest }) => rest);
+	return [];
 }
 
 /**

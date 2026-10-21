@@ -61,11 +61,9 @@ func TestNewTelemetrySink_FanoutIncludesPostHogWhenConfigured(t *testing.T) {
 			PostHogHost: "https://us.i.posthog.com",
 		},
 	}, store, slog.Default())
-	fanout, ok := sink.(*telemetryadapter.FanoutSink)
-	if !ok {
-		t.Fatalf("sink type = %T, want *telemetry.FanoutSink", sink)
+	if _, ok := sink.(*telemetryadapter.LocalSQLiteSink); !ok {
+		t.Fatalf("sink type = %T, want *telemetry.LocalSQLiteSink (remote telemetry disabled)", sink)
 	}
-	t.Cleanup(func() { _ = fanout.Close(t.Context()) })
 }
 
 type wiringTestRoundTripper func(*http.Request) (*http.Response, error)

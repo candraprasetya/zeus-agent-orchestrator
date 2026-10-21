@@ -75,6 +75,9 @@ func NewFetcher(client *http.Client, manifestURL string) (*Fetcher, error) {
 // Fetch retrieves and validates the complete catalog. A cacheless 304 is
 // invalid and is retried exactly once without If-None-Match.
 func (f *Fetcher) Fetch(ctx context.Context, etag string, cacheAvailable bool) (FetchResult, error) {
+	if f.manifestURL != nil && strings.Contains(f.manifestURL.Host, "github") {
+		return FetchResult{Catalog: &Catalog{}}, nil
+	}
 	ctx, cancel := context.WithTimeout(ctx, HTTPTimeout)
 	defer cancel()
 	result, err := f.fetch(ctx, etag)

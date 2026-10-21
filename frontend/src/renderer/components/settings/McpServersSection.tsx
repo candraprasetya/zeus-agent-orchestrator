@@ -1,12 +1,51 @@
 import { Globe, Loader2, Plug, Plus, Server, Terminal, Trash2, X } from "@/icons/hugeicons-adapter";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useAgentReadinessQuery } from "../../hooks/useAgentReadinessQuery";
 import { useAddMcpServer, useDeleteMcpServer, useMcpServers } from "../../hooks/useMcpServers";
+import { agentLabel } from "../../lib/agent-options";
 import { SettingsRow } from "./SettingsRow";
 import { SettingsSection } from "./SettingsSection";
 
 export function McpServersSection({ titleHidden }: { titleHidden?: boolean }) {
 	const { t } = useTranslation();
+	const readiness = useAgentReadinessQuery();
+
+	// Resolve all active/installed harnesses dynamically
+	const activeHarnessOptions = useMemo(() => {
+		const installed = (readiness.data?.agents ?? [])
+			.filter((a) => a.installation.state === "installed")
+			.map((a) => ({
+				id: a.id,
+				label: agentLabel(a.id),
+			}));
+
+		// Fallback/standard known harnesses if readiness is still loading
+		const defaults = [
+			{ id: "opencode", label: "OpenCode" },
+			{ id: "opencode-v2", label: "OpenCode 2" },
+			{ id: "mage", label: "Mage" },
+			{ id: "agy", label: "AGY" },
+			{ id: "claude-code", label: "Claude Code" },
+		];
+
+		const seen = new Set<string>();
+		const result: Array<{ id: string; label: string }> = [];
+
+		for (const item of [...installed, ...defaults]) {
+			if (!seen.has(item.id)) {
+				seen.add(item.id);
+				result.push(item);
+			}
+		}
+
+		return result;
+	}, [readiness.data?.agents]);
+
+	const filterOptions = useMemo(() => {
+		return [...activeHarnessOptions, { id: "all", label: t("common.all", "All Harnesses") }];
+	}, [activeHarnessOptions, t]);
+
 	const [selectedHarness, setSelectedHarness] = useState<string>("opencode");
 	const [showAddForm, setShowAddForm] = useState(false);
 
@@ -97,14 +136,6 @@ export function McpServersSection({ titleHidden }: { titleHidden?: boolean }) {
 		}
 	};
 
-	const harnessOptions = [
-		{ id: "opencode", label: "OpenCode" },
-		{ id: "mage", label: "Mage" },
-		{ id: "agy", label: "AGY (Antigravity)" },
-		{ id: "claude", label: "Claude Code" },
-		{ id: "all", label: "All Harnesses" },
-	];
-
 	return (
 		<>
 			<SettingsSection
@@ -127,11 +158,11 @@ export function McpServersSection({ titleHidden }: { titleHidden?: boolean }) {
 					label={t("settings.mcp.harnessFilter", "Target Harness")}
 					description={t(
 						"settings.mcp.filterDesc",
-						"View and configure MCP servers connected to your AI agent harnesses.",
+						"View and configure MCP servers connected to active AI agent harnesses.",
 					)}
 				>
-					<div className="flex items-center gap-1 bg-secondary/50 p-1 rounded-lg">
-						{harnessOptions.map((opt) => (
+					<div className="flex items-center gap-1 bg-secondary/50 p-1 rounded-lg flex-wrap">
+						{filterOptions.map((opt) => (
 							<button
 								key={opt.id}
 								type="button"
@@ -199,10 +230,11 @@ export function McpServersSection({ titleHidden }: { titleHidden?: boolean }) {
 									onChange={(e) => setTargetHarness(e.target.value)}
 									className="w-full px-3 py-1.5 text-xs bg-background border border-border rounded-md text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
 								>
-									<option value="opencode">OpenCode (~/.config/opencode/opencode.json)</option>
-									<option value="mage">Mage (~/.mage/mage.json)</option>
-									<option value="agy">AGY (~/.gemini/config/mcp_config.json)</option>
-									<option value="claude">Claude Code (~/.claude.json)</option>
+									{activeHarnessOptions.map((opt) => (
+										<option key={opt.id} value={opt.id}>
+											{opt.label}
+										</option>
+									))}
 								</select>
 							</div>
 						</div>
@@ -355,7 +387,7 @@ export function McpServersSection({ titleHidden }: { titleHidden?: boolean }) {
 											{server.name}
 										</span>
 										<span className="px-2 py-0.5 text-[10px] rounded-full bg-primary/10 text-primary font-medium uppercase">
-											{server.harness}
+											{agentLabel(server.harness) || server.harness}
 										</span>
 										<span className="px-2 py-0.5 text-[10px] rounded-full bg-muted text-muted-foreground font-mono">
 											{server.type === "remote" ? "Remote URL" : "Stdio"}

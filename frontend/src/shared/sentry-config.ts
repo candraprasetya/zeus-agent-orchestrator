@@ -9,5 +9,4 @@
 // process and daemon read AO_SENTRY_DSN, and both fall back to this constant.
 // Mobile has its own project and constant (see packages/mobile), because the
 // Expo bundle cannot reach frontend/src.
-export const DEFAULT_SENTRY_DSN =
-	"https://664339d231569b18bcf50d69a0ce37bf@o4511955966361600.ingest.us.sentry.io/4511955986677760";
+export const DEFAULT_SENTRY_DSN = "";

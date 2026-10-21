@@ -9,7 +9,6 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
-	"time"
 
 	"github.com/aoagents/agent-orchestrator/backend/internal/ports"
 )
@@ -27,7 +26,9 @@ type managedVersionChecker func(context.Context, Plan) (string, error)
 
 func newManagedVersionChecker(commands ports.CommandRunner, client *http.Client) managedVersionChecker {
 	if client == nil {
-		client = &http.Client{Timeout: 4 * time.Second}
+		return func(context.Context, Plan) (string, error) {
+			return "", errors.New("managed version check disabled in isolated banking mode")
+		}
 	}
 	return func(ctx context.Context, plan Plan) (string, error) {
 		plan.Package = packageWithoutLatest(plan.Package)

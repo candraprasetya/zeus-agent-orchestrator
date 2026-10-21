@@ -131,13 +131,14 @@ const globalSettingsCatalog: SettingsCatalogItem[] = [
 		id: "remoteHosts",
 		icon: Server,
 		label: (t) => t("settings.remoteHosts"),
-		visible: ({ developerMode }) => developerMode,
+		visible: () => false,
 		render: (_t, titleHidden) => <RemoteHostsSettings titleHidden={titleHidden} />,
 	},
 	{
 		id: "mobile",
 		icon: Smartphone,
 		label: (t) => t("settings.mobile"),
+		visible: () => false,
 		render: (t, titleHidden) => (
 			<>
 				<SettingsSection titleHidden={titleHidden} title={t("settings.mobile")} grouped>

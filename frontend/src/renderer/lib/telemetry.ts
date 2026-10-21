@@ -923,69 +923,7 @@ export function buildPostHogConfig(distinctId: string): PostHogInitOptions {
 }
 
 export async function initTelemetry(): Promise<boolean> {
-	if (initPromise) return initPromise;
-	const attempt = (async () => {
-		if (!POSTHOG_KEY) return false;
-		const bootstrap = await aoBridge.telemetry.getBootstrap();
-		// Null means the supervisor withheld it: no key, no data dir, or an
-		// unpackaged build that has not opted in. The client is never created.
-		if (!bootstrap) return false;
-		disabledEventMatchers = bootstrap.disabledEvents ?? [];
-		const channel = releaseChannelFrom(await readUpdateSettingsForTelemetry());
-		telemetryContext = buildTelemetryContext(bootstrap.appVersion, bootstrap.platform, channel);
-		posthog = await loadPostHog();
-		posthog.init(POSTHOG_KEY, buildPostHogConfig(bootstrap.distinctId));
-		posthog.register({
-			...telemetryContext,
-			surface: "renderer",
-		});
-		// Typed renderer fault intake has its own main-owned policy gate. PostHog
-		// product analytics are intentionally independent of that preference.
-		void initSentry({
-			release: bootstrap.appVersion,
-			channel,
-			platform: bootstrap.platform,
-			distinctId: bootstrap.distinctId,
-		});
-		bindErrorHandlers();
-		startDailyActiveHeartbeat({
-			storage: telemetryStorage(),
-			window,
-			document,
-			// Ride the batched request queue like every other renderer event
-			// (loaded, route_viewed). An earlier `send_instantly: true` here
-			// fired an immediate, un-retried send during init that never
-			// reached PostHog in packaged builds, so renderer app-active
-			// dropped to zero while batched events kept landing.
-			capture: async () =>
-				isDeniedEvent("ao.app.active")
-					? true
-					: Boolean(
-					posthog.capture(
-						postHogEventName("ao.app.active"),
-						withTelemetryContext(await sanitizeRendererProperties("ao.app.active", { channel: "renderer" })),
-					),
-				),
-		});
-		if (!isDeniedEvent("ao.renderer.loaded")) {
-			posthog.capture(
-				postHogEventName("ao.renderer.loaded"),
-				withTelemetryContext(await sanitizeRendererProperties("ao.renderer.loaded")),
-			);
-		}
-		return true;
-	})().catch(() => {
-		// A thrown error is transient (the bridge not ready yet, or a hiccup in
-		// posthog.init): drop the memoized promise so the next captured event
-		// retries init rather than the whole session going dark after one bad
-		// moment. A deliberate `return false` above (no key, not opted in) is
-		// not an error and stays cached, so an intentionally-withheld client is
-		// not retried forever.
-		if (initPromise === attempt) initPromise = null;
-		return false;
-	});
-	initPromise = attempt;
-	return attempt;
+	return false;
 }
 
 /**

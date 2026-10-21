@@ -46,14 +46,11 @@ const (
 	// daemon validates it at startup, but worker/orchestrator spawns resolve from
 	// explicit requests or project role config instead of falling back to it.
 	DefaultAgent = "claude-code"
-	// DefaultTelemetryPostHogHost is the default PostHog ingestion host when
-	// remote telemetry is enabled and AO_TELEMETRY_POSTHOG_HOST is unset.
-	DefaultTelemetryPostHogHost = "https://us.i.posthog.com"
+	// DefaultTelemetryPostHogHost is blank in isolated mode.
+	DefaultTelemetryPostHogHost = ""
 
-	// defaultCloudControlPlaneURL is the control plane a build talks to when no
-	// override is set. Production, now that the hosted offering is live;
-	// AO_CLOUD_CONTROL_PLANE_URL still overrides it (e.g. staging-api for dev).
-	defaultCloudControlPlaneURL = "https://api.aoagents.dev"
+	// defaultCloudControlPlaneURL is blank in isolated mode.
+	defaultCloudControlPlaneURL = ""
 )
 
 // TelemetryRemote selects the remote telemetry exporter.

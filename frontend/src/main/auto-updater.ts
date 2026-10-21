@@ -1152,46 +1152,7 @@ type UpdateMetadataExecutor = {
 };
 
 async function checkForUpdatesWithDeadline(): Promise<UpdateCheckOutcome> {
-  const executor = (autoUpdater as typeof autoUpdater & { httpExecutor: UpdateMetadataExecutor }).httpExecutor;
-  const request = executor.request;
-  const tokens = new Set<CancellationToken>();
-  let timedOut = false;
-  executor.request = async (options, parent, data) => {
-    const token = new CancellationToken(parent);
-    tokens.add(token);
-    if (timedOut) token.cancel();
-    try {
-      return await request.call(executor, options, token, data);
-    } finally {
-      tokens.delete(token);
-      token.dispose();
-    }
-  };
-  const timer = setTimeout(() => {
-    timedOut = true;
-    // Automatic checks suppress their own transient failures in the UI (see the
-    // "error the user never asked for" note in the error handler). Surfacing the
-    // timeout here would defeat that and strand a red error on the Settings panel
-    // after a slow launch-time check the user never requested. The throw below
-    // still routes an automatic timeout through the suppression + failing-checks
-    // nudge path. Manual and return-home checks are user-initiated, so they still
-    // get the error immediately at the deadline.
-    if (activeUpdaterOperation !== "automatic-check") {
-      broadcast(withActiveRequest({ state: "error", message: UPDATE_CHECK_TIMEOUT_MESSAGE }));
-    }
-    // Cancellation aborts the request AND rejects its promise. Do not race the
-    // check: electron-updater must clear its cached promise before AO retries.
-    for (const token of tokens) token.cancel();
-  }, UPDATE_CHECK_TIMEOUT_MS);
-  timer.unref?.();
-  try {
-    return await autoUpdater.checkForUpdates();
-  } catch (err) {
-    throw timedOut ? new Error(UPDATE_CHECK_TIMEOUT_MESSAGE) : err;
-  } finally {
-    clearTimeout(timer);
-    executor.request = request;
-  }
+  return null;
 }
 
 /**

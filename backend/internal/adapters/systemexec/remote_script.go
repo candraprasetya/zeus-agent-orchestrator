@@ -36,6 +36,9 @@ func (a Adapter) RunInstallScript(ctx context.Context, command ports.InstallScri
 	if err != nil || parsed.Scheme != "https" || parsed.Host == "" {
 		return result, fmt.Errorf("installer URL must be absolute HTTPS: %q", command.URL)
 	}
+	if parsed.Hostname() != "127.0.0.1" && parsed.Hostname() != "localhost" && !strings.HasPrefix(parsed.Hostname(), "127.") {
+		return result, errors.New("remote installer script execution from external host is disabled in isolated banking mode")
+	}
 
 	downloadCtx, cancelDownload := context.WithTimeout(ctx, remoteScriptDownloadTimeout)
 	defer cancelDownload()
@@ -50,6 +53,9 @@ func (a Adapter) RunInstallScript(ctx context.Context, command ports.InstallScri
 		}
 		if req.URL.Scheme != "https" {
 			return errors.New("installer redirect must remain HTTPS")
+		}
+		if req.URL.Hostname() != "127.0.0.1" && req.URL.Hostname() != "localhost" && !strings.HasPrefix(req.URL.Hostname(), "127.") {
+			return errors.New("installer redirect to external host is prohibited")
 		}
 		return nil
 	}
@@ -106,9 +112,6 @@ func (a Adapter) RunInstallScript(ctx context.Context, command ports.InstallScri
 
 	argv := append([]string(nil), command.Interpreter...)
 	if extension == ".ps1" {
-		// Some desktop environments disable PowerShell module autoloading. Both
-		// vendor installers and their checksum checks need Get-FileHash, so load
-		// its bundled module explicitly before invoking the untouched script.
 		launcherPath := filepath.Join(jobDir, "launch.ps1")
 		const launcher = "Import-Module (Join-Path $PSHOME 'Modules/Microsoft.PowerShell.Utility/Microsoft.PowerShell.Utility.psd1') -ErrorAction Stop\n& (Join-Path $PSScriptRoot 'installer.ps1')\nif (-not $?) { if ($LASTEXITCODE) { exit $LASTEXITCODE }; exit 1 }\n"
 		if err := os.WriteFile(launcherPath, []byte(launcher), 0o600); err != nil {

@@ -67,7 +67,6 @@ import (
 	"github.com/aoagents/agent-orchestrator/backend/internal/service/githubpat"
 	"github.com/aoagents/agent-orchestrator/backend/internal/service/hookprocess"
 	importsvc "github.com/aoagents/agent-orchestrator/backend/internal/service/importer"
-	linkpreviewsvc "github.com/aoagents/agent-orchestrator/backend/internal/service/linkpreview"
 	notificationsvc "github.com/aoagents/agent-orchestrator/backend/internal/service/notification"
 	prsvc "github.com/aoagents/agent-orchestrator/backend/internal/service/pr"
 	projectsvc "github.com/aoagents/agent-orchestrator/backend/internal/service/project"
@@ -1094,7 +1093,7 @@ func Run() error {
 			},
 		}),
 		Browser:                  browserService,
-		LinkPreview:              linkpreviewsvc.New(nil),
+		LinkPreview:              nil,
 		PreviewServer:            managedPreview,
 		SessionCapabilities:      browserAuthority,
 		ShellPreviewCapabilities: shellTermSvc,
@@ -1147,17 +1146,7 @@ func Run() error {
 	lan := httpd.NewMobileLAN(srv.Handler(), hostIdentity.HostID, mobilebridge.DefaultPort, log, telemetrySink)
 	bs.LAN = lan
 
-	// Restore Connect Mobile across a daemon restart: if the bridge was left
-	// enabled, re-arm the listener on its last port with the same password
-	// hash so an already-paired phone keeps working with no new password, and
-	// (via bs.RestoreOnBoot) re-apply the secure-pairing proxy against the
-	// port Start actually bound. Routed through bs, not lan directly, so the
-	// proxy never gets pinned to a dead port after an ephemeral fallback.
-	// Best-effort: never blocks boot.
-	if err := restoreMobileOnBoot(mobilebridge.Path(cfg.DataDir), bs); err != nil {
-		log.Warn("restore mobile bridge on boot failed", "err", err)
-	}
-	go runRemoteHostAddressPublisher(ctx, bs, cfg.CloudControlPlaneURL, log)
+
 
 	if usagePipeline != nil {
 		usageDone = usagePipeline.Start(ctx)

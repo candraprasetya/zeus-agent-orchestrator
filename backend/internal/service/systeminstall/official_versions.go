@@ -9,7 +9,6 @@ import (
 	"net/url"
 	"regexp"
 	"strings"
-	"time"
 )
 
 // officialReleaseSource marks an advisory compared against the vendor's own
@@ -104,10 +103,11 @@ func officialSourceFor(target Target, goos, goarch string) (officialSource, bool
 	}
 }
 
-// officialReleaseVersion fetches the vendor release channel for a harness and
-// returns a bare version such as 1.2.3 or 1.4.3-R5018.1.
+// officialReleaseVersion is disabled in isolated banking mode to prevent any outbound hits.
 func officialReleaseVersion(goos, goarch string) func(context.Context, Target) (string, error) {
-	return officialReleaseVersionWith(&http.Client{Timeout: 6 * time.Second}, goos, goarch)
+	return func(context.Context, Target) (string, error) {
+		return "", errNoOfficialSource
+	}
 }
 
 func officialReleaseVersionWith(client *http.Client, goos, goarch string) func(context.Context, Target) (string, error) {
