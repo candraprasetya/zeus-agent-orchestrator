@@ -1,4 +1,4 @@
-import { Activity, BadgeCheck, Bot, CircleHelp, Coffee, CreditCard, Globe2, Keyboard, RefreshCw, Server, Settings2, Smartphone, Sparkles, Users, type LucideIcon } from "lucide-react";
+import { Activity, BadgeCheck, Bot, CircleHelp, CreditCard, Globe2, Keyboard, RefreshCw, Server, Settings2, Smartphone, Sparkles, Users, type LucideIcon } from "lucide-react";
 import { lazy, type ReactNode } from "react";
 import type { TFunction } from "i18next";
 import type { GlobalSettingsSection, HarnessDiagnosticsRequest } from "../../stores/ui-store";
@@ -16,7 +16,6 @@ import { ReportProblemContent } from "./ReportProblemContent";
 import { RemoteHostsSettings } from "./RemoteHostsSettings";
 import { SettingsSection } from "./SettingsSection";
 import { SkillsSection } from "./SkillsSection";
-import { StayAwakeSection } from "./StayAwakeSection";
 import { TeamsSection } from "./TeamsSection";
 
 /** The memory window's own blocks, loaded only when the page is opened: it
