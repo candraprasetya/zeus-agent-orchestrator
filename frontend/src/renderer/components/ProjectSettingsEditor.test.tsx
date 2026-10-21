@@ -13,6 +13,7 @@ const initialValues: ProjectSettingsDraft = {
 	workerEffort: "", orchestratorEffort: "", reviewerEffort: "",
 	workerPermissions: "auto", orchestratorPermissions: "auto", reviewerPermissions: "",
 	autoReview: true, intakeEnabled: false, intakeRepo: "", intakeAssignee: "",
+	projectType: "", omniAndroidPath: "", omnimonPath: "", omniIosPath: "", omniI18nPath: "", wikiPath: "", teamId: "",
 };
 
 function setup(cloud: boolean, save = vi.fn().mockResolvedValue({})) {

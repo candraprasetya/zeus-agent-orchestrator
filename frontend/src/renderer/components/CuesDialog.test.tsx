@@ -142,6 +142,49 @@ test("failed deletion stays open for retry and pending deletion cannot be dismis
 	expect(cues.deleteCue).toHaveBeenCalledTimes(2);
 });
 
+test("empty state offers android and ios presets, creating them batch-wise with toast feedback", async () => {
+	vi.mocked(cues.fetchProjectCues).mockResolvedValue([]);
+	setup(<CuesSettings projectId="project" />);
+	const androidBtn = await screen.findByRole("button", { name: "Add Android Presets" });
+	const iosBtn = screen.getByRole("button", { name: "Add iOS Presets" });
+	expect(androidBtn).toBeInTheDocument();
+	expect(iosBtn).toBeInTheDocument();
+
+	fireEvent.click(androidBtn);
+	await waitFor(() => expect(cues.createCue).toHaveBeenCalledTimes(6));
+	expect(toast).toHaveBeenCalledWith("Added 6 Android cue(s).", undefined, "success");
+});
+
+test("presets button skips already existing cues and notifies if all exist", async () => {
+	vi.mocked(cues.fetchProjectCues).mockResolvedValue([
+		{ id: "c1", projectId: "project", name: "Android Build (Debug)", type: "command", command: "./gradlew assembleDebug", createdAt: "", updatedAt: "" },
+	]);
+	setup(<CuesSettings projectId="project" />);
+	const presetsBtn = await screen.findByRole("button", { name: "Presets" });
+	fireEvent.keyDown(presetsBtn, { key: "ArrowDown" });
+
+	const addAndroid = await screen.findByRole("menuitem", { name: "Add Android Presets" });
+	fireEvent.click(addAndroid);
+
+	// 6 presets total - 1 already exists = 5 should be created
+	await waitFor(() => expect(cues.createCue).toHaveBeenCalledTimes(5));
+	expect(toast).toHaveBeenCalledWith("Added 5 Android cue(s).", undefined, "success");
+});
+
+test("new cue form provides preset template selection to pre-fill draft fields", async () => {
+	setup(<CuesSettings projectId="project" />);
+	fireEvent.click(await screen.findByRole("button", { name: "New cue" }));
+	const templateMenu = screen.getByRole("button", { name: "Template" });
+	expect(templateMenu).toBeInTheDocument();
+	fireEvent.keyDown(templateMenu, { key: "ArrowDown" });
+
+	const option = await screen.findByRole("menuitem", { name: /Android Build \(Debug\)/ });
+	fireEvent.click(option);
+
+	expect(screen.getByLabelText("Name")).toHaveValue("Android Build (Debug)");
+	expect(screen.getByLabelText("Command")).toHaveValue("./gradlew assembleDebug");
+});
+
 
 
 test("session command invocation selects its newly opened terminal", async () => {

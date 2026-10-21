@@ -7,10 +7,11 @@ import { useUiStore } from "../stores/ui-store";
 import { useTranslation } from "react-i18next";
 import * as Dialog from "@radix-ui/react-dialog";
 import { useQuery } from "@tanstack/react-query";
-import { ChevronLeft, TriangleAlert, X, type LucideIcon } from "@/icons/hugeicons-adapter";
+import { ChevronLeft, FolderOpen, TriangleAlert, X, type LucideIcon } from "@/icons/hugeicons-adapter";
 import { memo, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import type { components } from "../../api/schema";
 import { useAgentReadinessQuery, useEnsureAgentReadiness } from "../hooks/useAgentReadinessQuery";
+import { useTeams } from "../hooks/useTeams";
 import { workspaceQueryOptions } from "../hooks/useWorkspaceQuery";
 import { AGENT_OPTIONS, agentLabel } from "../lib/agent-options";
 import {
@@ -22,6 +23,8 @@ import {
 	unknownAgentReadiness,
 } from "../lib/agent-select-options";
 import { cn } from "../lib/utils";
+import { aoBridge } from "../lib/bridge";
+import { apiClient } from "../lib/api-client";
 import { useAgentManagementMenu } from "../hooks/useAgentManagementMenu";
 import { useSettings } from "../hooks/useSettings";
 import { AgentAvatar } from "./AgentAvatar";
@@ -35,6 +38,7 @@ import { Label } from "./ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { appI18n } from "../i18n";
 import { Button } from "./ui/button";
+import { Input } from "./ui/input";
 
 type TrackerIntakeConfig = components["schemas"]["TrackerIntakeConfig"];
 
@@ -42,6 +46,13 @@ export type CreateProjectAgentSelection = {
 	workerAgent: string;
 	orchestratorAgent: string;
 	trackerIntake?: TrackerIntakeConfig;
+	projectType?: string;
+	omniAndroidPath?: string;
+	omnimonPath?: string;
+	omniIosPath?: string;
+	omniI18nPath?: string;
+	wikiPath?: string;
+	teamId?: string;
 };
 
 const EMPTY_INTAKE: IntakeForm = { enabled: false, repo: "", assignee: "" };
@@ -172,6 +183,14 @@ export function CreateProjectAgentSheet({
 	const [orchestratorAgent, setOrchestratorAgent] = useState("");
 	const [workerAgentTouched, setWorkerAgentTouched] = useState(false);
 	const [orchestratorAgentTouched, setOrchestratorAgentTouched] = useState(false);
+	const { teams } = useTeams(open && !hostId);
+	const [projectType, setProjectType] = useState<string>("");
+	const [teamId, setTeamId] = useState<string>("");
+	const [omniAndroidPath, setOmniAndroidPath] = useState<string>("");
+	const [omnimonPath, setOmnimonPath] = useState<string>("");
+	const [omniIosPath, setOmniIosPath] = useState<string>("");
+	const [omniI18nPath, setOmniI18nPath] = useState<string>("");
+	const [wikiPath, setWikiPath] = useState<string>("");
 	useEnsureAgentReadiness({
 		agentIds: [workerAgent, orchestratorAgent],
 		enabled: contentOpen && connected && (workerAgent !== "" || orchestratorAgent !== ""),
@@ -207,9 +226,22 @@ export function CreateProjectAgentSheet({
 			setWorkerAgentTouched(false);
 			setOrchestratorAgentTouched(false);
 			setIntake(EMPTY_INTAKE);
+			setProjectType("");
+			setTeamId("");
+			setOmniAndroidPath("");
+			setOmnimonPath("");
+			setOmniIosPath("");
+			setOmniI18nPath("");
+			setWikiPath("");
 		}
 		wasOpen.current = open;
 	}, [open]);
+
+	useEffect(() => {
+		if (open && path) {
+			void checkAndAutoDetectWiki(path, wikiPath, setWikiPath);
+		}
+	}, [open, path]);
 
 	useEffect(() => {
 		if (!open) return;
@@ -220,6 +252,159 @@ export function CreateProjectAgentSheet({
 			setOrchestratorAgent(defaultAuthorizedAgentForRole(authorizedAgents, sessionHistory, "orchestrator"));
 		}
 	}, [authorizedAgents, open, orchestratorAgentTouched, sessionHistory, workerAgentTouched]);
+
+	const mobileControl = (
+		<div className="space-y-3 rounded-lg border border-border/60 bg-muted/20 p-3.5">
+			<div className="flex items-center justify-between">
+				<span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+					Mobile & Squad Configuration
+				</span>
+			</div>
+
+			<div className="grid gap-3 sm:grid-cols-2">
+				<div className="space-y-1.5">
+					<Label className="text-xs font-medium text-foreground">Project Type</Label>
+					<SettingsOptionMenu
+						aria-label="Project Type"
+						value={projectType}
+						options={[
+							{ value: "", label: "None (Not specified)" },
+							{ value: "android", label: "Android" },
+							{ value: "ios", label: "iOS" },
+						]}
+						placeholder="Select Project Type"
+						triggerClassName="w-full justify-between"
+						onChange={(type) => {
+							setProjectType(type);
+							if (type === "ios" && !teamId) setTeamId("zeus-team-ios");
+							else if (type === "android" && !teamId) setTeamId("zeus-team-android");
+						}}
+					/>
+				</div>
+
+				<div className="space-y-1.5">
+					<Label className="text-xs font-medium text-foreground">Assigned Squad</Label>
+					<SettingsOptionMenu
+						aria-label="Assigned Squad"
+						value={teamId}
+						options={[
+							{ value: "", label: "None (No squad)" },
+							...teams.map((t) => ({ value: t.id, label: t.name })),
+						]}
+						placeholder="Select Squad"
+						triggerClassName="w-full justify-between"
+						onChange={(selectedTeam) => {
+							setTeamId(selectedTeam);
+							if (selectedTeam === "zeus-team-ios" && !projectType) setProjectType("ios");
+							else if (selectedTeam === "zeus-team-android" && !projectType) setProjectType("android");
+						}}
+					/>
+				</div>
+			</div>
+
+			{projectType === "android" && (
+				<div className="space-y-2.5 pt-1">
+					<div className="space-y-1.5">
+						<Label className="text-xs font-medium text-foreground">Omni-Android folder</Label>
+						<FolderBrowseInput
+							value={omniAndroidPath}
+							placeholder="/path/to/Omni-Android"
+							onChange={(val) => {
+								setOmniAndroidPath(val);
+								void checkAndAutoDetectWiki(val, wikiPath, setWikiPath);
+							}}
+							onBrowse={async () => {
+								const picked = await aoBridge.app.chooseDirectory({
+									title: "Select Omni-Android Directory",
+									defaultPath: omniAndroidPath || path || undefined,
+								});
+								if (picked) {
+									setOmniAndroidPath(picked);
+									void checkAndAutoDetectWiki(picked, wikiPath, setWikiPath);
+								}
+							}}
+						/>
+					</div>
+					<div className="space-y-1.5">
+						<Label className="text-xs font-medium text-foreground">Omnimon folder</Label>
+						<FolderBrowseInput
+							value={omnimonPath}
+							placeholder="/path/to/Omnimon"
+							onChange={setOmnimonPath}
+							onBrowse={async () => {
+								const picked = await aoBridge.app.chooseDirectory({
+									title: "Select Omnimon Directory",
+									defaultPath: omnimonPath || undefined,
+								});
+								if (picked) setOmnimonPath(picked);
+							}}
+						/>
+					</div>
+				</div>
+			)}
+
+			{projectType === "ios" && (
+				<div className="space-y-2.5 pt-1">
+					<div className="space-y-1.5">
+						<Label className="text-xs font-medium text-foreground">Omni-IOS folder</Label>
+						<FolderBrowseInput
+							value={omniIosPath}
+							placeholder="/path/to/Omni-IOS"
+							onChange={(val) => {
+								setOmniIosPath(val);
+								void checkAndAutoDetectWiki(val, wikiPath, setWikiPath);
+							}}
+							onBrowse={async () => {
+								const picked = await aoBridge.app.chooseDirectory({
+									title: "Select Omni-IOS Directory",
+									defaultPath: omniIosPath || path || undefined,
+								});
+								if (picked) {
+									setOmniIosPath(picked);
+									void checkAndAutoDetectWiki(picked, wikiPath, setWikiPath);
+								}
+							}}
+						/>
+					</div>
+				</div>
+			)}
+
+			{(projectType === "ios" || projectType === "android") && (
+				<div className="space-y-2.5 pt-1">
+					<div className="space-y-1.5">
+						<Label className="text-xs font-medium text-foreground">omni-i18n folder</Label>
+						<FolderBrowseInput
+							value={omniI18nPath}
+							placeholder="/path/to/omni-i18n"
+							onChange={setOmniI18nPath}
+							onBrowse={async () => {
+								const picked = await aoBridge.app.chooseDirectory({
+									title: "Select omni-i18n Directory",
+									defaultPath: omniI18nPath || undefined,
+								});
+								if (picked) setOmniI18nPath(picked);
+							}}
+						/>
+					</div>
+					<div className="space-y-1.5">
+						<Label className="text-xs font-medium text-foreground">Wiki folder</Label>
+						<FolderBrowseInput
+							value={wikiPath}
+							placeholder="Auto-detected or select wiki folder..."
+							onChange={setWikiPath}
+							onBrowse={async () => {
+								const picked = await aoBridge.app.chooseDirectory({
+									title: "Select Wiki Directory",
+									defaultPath: wikiPath || undefined,
+								});
+								if (picked) setWikiPath(picked);
+							}}
+						/>
+					</div>
+				</div>
+			)}
+		</div>
+	);
 
 	if (isBusy) return null;
 
@@ -344,10 +529,22 @@ export function CreateProjectAgentSheet({
 								/>
 							) : null
 						}
+						extraControl={mobileControl}
 						isBusy={isBusy}
 						onCancel={() => onOpenChange(false)}
 						onSubmit={() =>
-							void onSubmit({ workerAgent, orchestratorAgent, trackerIntake: intakeVisible ? buildIntake(intake) : undefined })
+							void onSubmit({
+								workerAgent,
+								orchestratorAgent,
+								trackerIntake: intakeVisible ? buildIntake(intake) : undefined,
+								projectType: projectType || undefined,
+								omniAndroidPath: omniAndroidPath || undefined,
+								omnimonPath: omnimonPath || undefined,
+								omniIosPath: omniIosPath || undefined,
+								omniI18nPath: omniI18nPath || undefined,
+								wikiPath: wikiPath || undefined,
+								teamId: teamId || undefined,
+							})
 						}
 						setupNotice={
 							repositorySetupNeeded
@@ -637,3 +834,57 @@ export const RequiredAgentField = memo(function RequiredAgentField({
 		</div>
 	);
 });
+
+function FolderBrowseInput({
+	value,
+	placeholder,
+	onChange,
+	onBrowse,
+}: {
+	value: string;
+	placeholder?: string;
+	onChange: (value: string) => void;
+	onBrowse: () => void;
+}) {
+	return (
+		<div className="flex w-full items-center gap-1.5">
+			<Input
+				value={value}
+				placeholder={placeholder}
+				onChange={(e) => onChange(e.target.value)}
+				className="h-8 text-xs font-mono bg-background/50 flex-1"
+			/>
+			<Button
+				type="button"
+				variant="outline"
+				size="sm"
+				className="h-8 shrink-0 px-2.5 text-xs gap-1.5"
+				onClick={onBrowse}
+			>
+				<FolderOpen className="size-3.5" />
+				Browse
+			</Button>
+		</div>
+	);
+}
+
+async function checkAndAutoDetectWiki(
+	rootPath: string,
+	currentWiki: string,
+	onFound: (wikiPath: string) => void,
+) {
+	if (!rootPath.trim() || currentWiki.trim()) return;
+	try {
+		const { data } = await apiClient.GET("/api/v1/fs/dirs", {
+			params: { query: { path: rootPath.trim() } },
+		});
+		if (data?.entries) {
+			const found = data.entries.find((e) => e.name.toLowerCase() === "wiki");
+			if (found) {
+				onFound(found.path);
+			}
+		}
+	} catch {
+		// Ignore listing errors
+	}
+}

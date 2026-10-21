@@ -249,6 +249,7 @@ export const CircleCheck = createHugeIcon("circle-check", _CheckmarkCircle01Icon
 export const CircleDashed = createHugeIcon("circle-dashed", _CircleIcon);
 export const CircleHelp = createHugeIcon("circle-help", _HelpCircleIcon);
 export const CircleMinus = createHugeIcon("circle-minus", _MinusSignCircleIcon);
+export const Clock = createHugeIcon("clock", _Clock01Icon);
 export const Clock3 = createHugeIcon("clock-3", _Clock01Icon);
 export const Cloud = createHugeIcon("cloud", _CloudIcon);
 export const Code2 = createHugeIcon("code-2", _SourceCodeIcon);

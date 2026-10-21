@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Loader2, MessageSquare, Pencil, Plus, TerminalSquare, Trash2, X } from "@/icons/hugeicons-adapter";
+import { Loader2, MessageSquare, Pencil, Plus, Smartphone, TerminalSquare, Trash2, X } from "@/icons/hugeicons-adapter";
 import { apiErrorMessage } from "../lib/api-client";
 import { useUiStore } from "../stores/ui-store";
 import {
@@ -11,8 +11,15 @@ import {
 } from "../hooks/useCuesQuery";
 import { CUE_LIMITS } from "../lib/cues";
 import type { CueDTO, CueInput } from "../lib/cues";
+import { ALL_CUE_PRESETS, getPresetsForPlatform, presetToCueInput } from "../lib/cue-presets";
 import { Button } from "./ui/button";
 import { ConfirmDialog } from "./ConfirmDialog";
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuTrigger,
+} from "./ui/dropdown-menu";
 import {
 	Dialog,
 	DialogContent,
@@ -182,6 +189,44 @@ function ProjectCuesSettings({ projectId, onBusyChange, createOnly = false, onCr
 		}
 	};
 
+	const handleApplyPresets = async (platform: "android" | "ios") => {
+		if (pending.current) return;
+		const presets = getPresetsForPlatform(platform);
+		const existingNames = new Set((cuesQuery.data ?? []).map((c) => c.name.toLowerCase()));
+		const toCreate = presets.filter((p) => !existingNames.has(p.name.toLowerCase()));
+		const platformName = platform === "android" ? "Android" : "iOS";
+		if (toCreate.length === 0) {
+			showGlobalToast(
+				t("cues.presetsAllExist", { platform: platformName }),
+				undefined,
+				"info",
+			);
+			return;
+		}
+
+		pending.current = true;
+		setSaving(true);
+		try {
+			let createdCount = 0;
+			for (const preset of toCreate) {
+				await createMutation.mutateAsync(presetToCueInput(preset));
+				createdCount++;
+			}
+			if (!mounted.current) return;
+			showGlobalToast(
+				t("cues.presetsAdded", { count: createdCount, platform: platformName }),
+				undefined,
+				"success",
+			);
+		} catch (error) {
+			if (!mounted.current) return;
+			showGlobalToast(t("cues.saveFailed"), apiErrorMessage(error, t("cues.saveFailed")), "error");
+		} finally {
+			pending.current = false;
+			if (mounted.current) setSaving(false);
+		}
+	};
+
 	const renderList = () => {
 		if (!cuesQuery.isFetchedAfterMount || cuesQuery.isFetching) {
 			// Hold the list's footprint while loading so nothing flashes before the real rows.
@@ -217,6 +262,33 @@ function ProjectCuesSettings({ projectId, onBusyChange, createOnly = false, onCr
 									<Plus aria-hidden="true" />
 									{t("cues.newCue")}
 								</Button>
+							</div>
+							<div className="settings-row-bar flex-wrap gap-2 border-t border-border/40 bg-muted/10">
+								<span className="text-xs text-settings-muted">{t("cues.presetsEmptyPrompt")}</span>
+								<div className="flex items-center gap-2">
+									<Button
+										type="button"
+										variant="outline"
+										size="sm"
+										className="h-7 text-xs"
+										disabled={busy}
+										onClick={() => void handleApplyPresets("android")}
+									>
+										<Smartphone className="size-3.5 text-settings-muted" aria-hidden="true" />
+										{t("cues.addAndroidPresets")}
+									</Button>
+									<Button
+										type="button"
+										variant="outline"
+										size="sm"
+										className="h-7 text-xs"
+										disabled={busy}
+										onClick={() => void handleApplyPresets("ios")}
+									>
+										<Smartphone className="size-3.5 text-settings-muted" aria-hidden="true" />
+										{t("cues.addIosPresets")}
+									</Button>
+								</div>
 							</div>
 						</div>
 					</section>
@@ -277,6 +349,40 @@ function ProjectCuesSettings({ projectId, onBusyChange, createOnly = false, onCr
 		const command = draft.type === "command";
 		const contentId = command ? "cue-command" : "cue-prompt";
 		return <div className="flex flex-col gap-(--size-settings-section-inner-gap)">
+			{formOpen === "new" ? (
+				<div className="flex flex-col gap-1.5">
+					<span className="settings-field-label">{t("cues.template")}</span>
+					<SettingsOptionMenu
+						aria-label={t("cues.template")}
+						value=""
+						placeholder={t("cues.templatePlaceholder")}
+						options={[
+							{ value: "", label: t("cues.templateCustom") },
+							...ALL_CUE_PRESETS.map((preset) => ({
+								value: preset.id,
+								label: `[${preset.platform === "android" ? "Android" : "iOS"}] ${preset.name}`,
+								icon: <CueTypeIcon type={preset.type} className="size-3! shrink-0 text-settings-muted" />,
+							})),
+						]}
+						onChange={(presetId) => {
+							const selected = ALL_CUE_PRESETS.find((p) => p.id === presetId);
+							if (selected) {
+								setDraft({
+									name: selected.name,
+									type: selected.type,
+									command: selected.command ?? "",
+									prompt: selected.prompt ?? "",
+								});
+								setFormError(null);
+							}
+						}}
+						triggerClassName="w-fit self-start"
+						menuAlign="start"
+						menuClassName="border-0! shadow-md! max-h-60 overflow-y-auto"
+					/>
+				</div>
+			) : null}
+
 			<div className="flex flex-col gap-1.5">
 				<label htmlFor="cue-name" className="settings-field-label">
 					{t("cues.nameLabel")}
@@ -351,10 +457,30 @@ function ProjectCuesSettings({ projectId, onBusyChange, createOnly = false, onCr
 						</Button>
 					</>
 				) : (
-					<Button type="button" size="sm" disabled={busy} onClick={openNew}>
-						<Plus aria-hidden="true" />
-						{t("cues.newCue")}
-					</Button>
+					<div className="flex items-center gap-2">
+						<DropdownMenu>
+							<DropdownMenuTrigger asChild>
+								<Button type="button" variant="outline" size="sm" disabled={busy}>
+									<Smartphone className="size-3.5 text-settings-muted" aria-hidden="true" />
+									{t("cues.presets")}
+								</Button>
+							</DropdownMenuTrigger>
+							<DropdownMenuContent align="end">
+								<DropdownMenuItem onSelect={() => void handleApplyPresets("android")}>
+									<Smartphone className="size-3.5 text-settings-muted" aria-hidden="true" />
+									{t("cues.addAndroidPresets")}
+								</DropdownMenuItem>
+								<DropdownMenuItem onSelect={() => void handleApplyPresets("ios")}>
+									<Smartphone className="size-3.5 text-settings-muted" aria-hidden="true" />
+									{t("cues.addIosPresets")}
+								</DropdownMenuItem>
+							</DropdownMenuContent>
+						</DropdownMenu>
+						<Button type="button" size="sm" disabled={busy} onClick={openNew}>
+							<Plus aria-hidden="true" />
+							{t("cues.newCue")}
+						</Button>
+					</div>
 				)}
 			</div>
 			)}

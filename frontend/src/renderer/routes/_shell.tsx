@@ -199,6 +199,13 @@ type CreateProjectConfigInput = {
 	orchestratorAgent: string;
 	trackerIntake?: components["schemas"]["TrackerIntakeConfig"];
 	defaultBranch?: string;
+	projectType?: string;
+	omniAndroidPath?: string;
+	omnimonPath?: string;
+	omniIosPath?: string;
+	omniI18nPath?: string;
+	wikiPath?: string;
+	teamId?: string;
 };
 
 export function createProjectConfig(input: CreateProjectConfigInput): components["schemas"]["ProjectConfig"] {
@@ -207,6 +214,13 @@ export function createProjectConfig(input: CreateProjectConfigInput): components
 		worker: { agent: input.workerAgent as components["schemas"]["RoleOverride"]["agent"] },
 		orchestrator: { agent: input.orchestratorAgent as components["schemas"]["RoleOverride"]["agent"] },
 		...(input.trackerIntake ? { trackerIntake: input.trackerIntake } : {}),
+		...(input.projectType ? { projectType: input.projectType } : {}),
+		...(input.omniAndroidPath ? { omniAndroidPath: input.omniAndroidPath } : {}),
+		...(input.omnimonPath ? { omnimonPath: input.omnimonPath } : {}),
+		...(input.omniIosPath ? { omniIosPath: input.omniIosPath } : {}),
+		...(input.omniI18nPath ? { omniI18nPath: input.omniI18nPath } : {}),
+		...(input.wikiPath ? { wikiPath: input.wikiPath } : {}),
+		...(input.teamId ? { teamId: input.teamId } : {}),
 	};
 }
 
@@ -717,14 +731,7 @@ function ShellLayout() {
 	);
 
 	const createProject = useCallback(
-		async (input: {
-			path: string;
-			workerAgent: string;
-			orchestratorAgent: string;
-			trackerIntake?: components["schemas"]["TrackerIntakeConfig"];
-			asWorkspace?: boolean;
-			clonePreparationId?: string;
-		}) => {
+		async (input: CreateProjectInput) => {
 			void addRendererExceptionStep("Project add requested", {
 				source: "project-add",
 				operation: "project_add",

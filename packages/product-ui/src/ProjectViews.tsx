@@ -301,6 +301,7 @@ export function ProjectSetupFormView({
 	alert,
 	canSubmit,
 	intakeControl,
+	extraControl,
 	isBusy,
 	onCancel,
 	onSubmit,
@@ -322,6 +323,7 @@ export function ProjectSetupFormView({
 	alert?: ProjectSetupAlert | null;
 	canSubmit: boolean;
 	intakeControl: ReactNode;
+	extraControl?: ReactNode;
 	isBusy: boolean;
 	onCancel: () => void;
 	onSubmit: () => void;
@@ -373,6 +375,7 @@ export function ProjectSetupFormView({
 			)}
 
 			<div>{intakeControl}</div>
+			{extraControl && <div>{extraControl}</div>}
 
 			{setupNotice && (
 				<div className="rounded-lg border border-[var(--color-border-agents-sheet)] bg-[var(--color-bg-agents-sheet-control)]/80 px-3 py-2.5 text-xs leading-body-md text-[var(--color-text-agents-sheet-description)]">
