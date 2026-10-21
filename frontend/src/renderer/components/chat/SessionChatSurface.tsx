@@ -16,7 +16,7 @@ import { useQuery } from "@tanstack/react-query";
 import { memo, useEffect, useRef, useState, type ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import { apiClient, apiErrorMessage } from "../../lib/api-client";
-import { clientForHost } from "../../lib/hosts";
+import { clientForHost } from "../../lib/host-clients";
 import {
 	findActiveAgentSwitch,
 	isTerminalAgentSwitch,
