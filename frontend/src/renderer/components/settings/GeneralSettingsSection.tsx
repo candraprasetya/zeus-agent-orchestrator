@@ -7,7 +7,6 @@ import { useLocaleStore } from "../../stores/locale-store";
 import { useSoundNotificationsStore } from "../../stores/sound-notifications-store";
 import { useUiStore } from "../../stores/ui-store";
 import { useTelemetryPolicyStore } from "../../stores/telemetry-policy-store";
-import { ConfirmDialog } from "../ConfirmDialog";
 import { CliLinkSettings } from "./CliLinkSettingsRow";
 import { useTerminalShellStore } from "../../stores/terminal-shell-store";
 import { DefaultCloudSandboxSection } from "./DefaultCloudSandboxRow";
@@ -17,7 +16,7 @@ import { SettingsSection } from "./SettingsSection";
 import { ThemePaletteSwatch } from "./ThemePaletteSwatch";
 import { Switch } from "../ui/switch";
 import { cn } from "../../lib/utils";
-import { useSettings, useUpdateCloudOffering, useUpdateSessionInterface, useUpdateVersionRefresh } from "../../hooks/useSettings";
+import { useSettings, useUpdateSessionInterface, useUpdateVersionRefresh } from "../../hooks/useSettings";
 import type { SessionMode } from "../../types/workspace";
 import type { TerminalShellKind } from "../../../shared/ui-locale";
 import { isMacPlatform, isWindowsPlatform } from "../../lib/platform";
@@ -279,7 +278,6 @@ export function GeneralSettingsSection({
 						onCheckedChange={setDeveloperMode}
 					/>
 				</SettingsRow>
-				{developerMode && <CloudOfferingRow />}
 				{developerMode && <DiagnosticsRow />}
 				<CliLinkSettings enabled={developerMode} />
 				{developerMode && <SideChatsRow />}
@@ -365,59 +363,5 @@ function WindowTranslucencyRow() {
 				onCheckedChange={setWindowTranslucency}
 			/>
 		</SettingsRow>
-	);
-}
-
-/**
- * Developer Mode-only toggle for the cloud offering. Persisted daemon-side (a
- * preference, not renderer state) so every surface resolves the same gate; the
- * daemon combines it with its baked control-plane URL into cloudEnabled, which
- * is what reveals sign-in, cloud projects, and sandbox sessions.
- */
-function CloudOfferingRow() {
-	const { t } = useTranslation();
-	const { settings, isLoading } = useSettings();
-	const { update, saving, error } = useUpdateCloudOffering();
-	// Enabling requires an explicit confirmation (the offering is an unstable
-	// preview); disabling never does.
-	const [confirmOpen, setConfirmOpen] = useState(false);
-	return (
-		<div className="flex w-full flex-col">
-			<SettingsRow
-				label={t("settings.cloud")}
-				description={
-					<>
-						{t("settings.cloudToggleHint")}
-						{error ? <span role="alert" className="block text-error">{error}</span> : null}
-					</>
-				}
-			>
-				<Switch
-					aria-label={t("settings.cloud")}
-					checked={settings?.cloudOffering ?? false}
-					disabled={isLoading || saving}
-					onCheckedChange={(enabled) => {
-						if (enabled) {
-							setConfirmOpen(true);
-							return;
-						}
-						update(false);
-					}}
-				/>
-			</SettingsRow>
-			<ConfirmDialog
-				open={confirmOpen}
-				title={t("settings.cloudConfirm.title")}
-				description={t("settings.cloudConfirm.description")}
-				confirmLabel={t("settings.cloudConfirm.confirm")}
-				destructive
-				busy={saving}
-				onConfirm={() => {
-					update(true);
-					setConfirmOpen(false);
-				}}
-				onOpenChange={setConfirmOpen}
-			/>
-		</div>
 	);
 }

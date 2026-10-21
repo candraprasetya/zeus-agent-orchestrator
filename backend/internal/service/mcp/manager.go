@@ -151,6 +151,50 @@ func (m *Manager) List(ctx context.Context, harness string) ([]ServerConfig, err
 	return results, nil
 }
 
+func parseOpencodeServerEntry(out *[]ServerConfig, cfgPath, harnessName, name string, serverMap map[string]any) {
+	srvType, _ := serverMap["type"].(string)
+	if srvType == "" {
+		srvType = "local"
+	}
+
+	enabled := true
+	if val, exists := serverMap["enabled"]; exists {
+		if b, isBool := val.(bool); isBool {
+			enabled = b
+		}
+	}
+
+	cfg := ServerConfig{
+		Name:       name,
+		Harness:    harnessName,
+		Type:       srvType,
+		ConfigPath: cfgPath,
+		Enabled:    enabled,
+	}
+
+	if srvType == "remote" {
+		cfg.URL, _ = serverMap["url"].(string)
+	} else {
+		if cmdArr, ok := serverMap["command"].([]any); ok && len(cmdArr) > 0 {
+			cfg.Command = fmt.Sprint(cmdArr[0])
+			for _, a := range cmdArr[1:] {
+				cfg.Args = append(cfg.Args, fmt.Sprint(a))
+			}
+		} else if cmdStr, ok := serverMap["command"].(string); ok {
+			cfg.Command = cmdStr
+		}
+
+		if envMap, ok := serverMap["environment"].(map[string]any); ok {
+			cfg.Env = make(map[string]string, len(envMap))
+			for k, v := range envMap {
+				cfg.Env[k] = fmt.Sprint(v)
+			}
+		}
+	}
+
+	*out = append(*out, cfg)
+}
+
 func (m *Manager) listOpencodeCompatible(cfgPath, harnessName string) ([]ServerConfig, error) {
 	data, err := os.ReadFile(cfgPath)
 	if err != nil {
@@ -174,47 +218,20 @@ func (m *Manager) listOpencodeCompatible(cfgPath, harnessName string) ([]ServerC
 			continue
 		}
 
-		srvType, _ := serverMap["type"].(string)
-		if srvType == "" {
-			srvType = "local"
-		}
-
-		enabled := true
-		if val, exists := serverMap["enabled"]; exists {
-			if b, isBool := val.(bool); isBool {
-				enabled = b
-			}
-		}
-
-		cfg := ServerConfig{
-			Name:       name,
-			Harness:    harnessName,
-			Type:       srvType,
-			ConfigPath: cfgPath,
-			Enabled:    enabled,
-		}
-
-		if srvType == "remote" {
-			cfg.URL, _ = serverMap["url"].(string)
-		} else {
-			if cmdArr, ok := serverMap["command"].([]any); ok && len(cmdArr) > 0 {
-				cfg.Command = fmt.Sprint(cmdArr[0])
-				for _, a := range cmdArr[1:] {
-					cfg.Args = append(cfg.Args, fmt.Sprint(a))
-				}
-			} else if cmdStr, ok := serverMap["command"].(string); ok {
-				cfg.Command = cmdStr
-			}
-
-			if envMap, ok := serverMap["environment"].(map[string]any); ok {
-				cfg.Env = make(map[string]string, len(envMap))
-				for k, v := range envMap {
-					cfg.Env[k] = fmt.Sprint(v)
+		if name == "servers" {
+			if _, hasCmd := serverMap["command"]; !hasCmd {
+				if _, hasURL := serverMap["url"]; !hasURL {
+					for subName, subItem := range serverMap {
+						if subMap, isMap := subItem.(map[string]any); isMap {
+							parseOpencodeServerEntry(&out, cfgPath, harnessName, subName, subMap)
+						}
+					}
+					continue
 				}
 			}
 		}
 
-		out = append(out, cfg)
+		parseOpencodeServerEntry(&out, cfgPath, harnessName, name, serverMap)
 	}
 	return out, nil
 }
@@ -415,7 +432,11 @@ func (m *Manager) addOpencodeCompatible(cfgPath, harnessName, name, srvType stri
 		}
 	}
 
-	mcpVal[name] = serverEntry
+	targetMap := mcpVal
+	if nested, ok := mcpVal["servers"].(map[string]any); ok {
+		targetMap = nested
+	}
+	targetMap[name] = serverEntry
 
 	if err := writeJSONPretty(cfgPath, root); err != nil {
 		return ServerConfig{}, err
@@ -549,11 +570,11 @@ func (m *Manager) Delete(ctx context.Context, harness, name string) error {
 
 	switch harness {
 	case "opencode":
-		return deleteFromJSONKey(m.opencodeConfigPath(), "mcp", name)
+		return deleteFromOpencode(m.opencodeConfigPath(), name)
 	case "opencode-v2":
-		return deleteFromJSONKey(m.opencodeConfigPath(), "mcp", name)
+		return deleteFromOpencode(m.opencodeConfigPath(), name)
 	case "mage":
-		return deleteFromJSONKey(m.mageConfigPath(), "mcp", name)
+		return deleteFromOpencode(m.mageConfigPath(), name)
 	case "agy":
 		return deleteFromJSONKey(m.agyConfigPath(), "mcpServers", name)
 	case "claude-code":
@@ -564,6 +585,30 @@ func (m *Manager) Delete(ctx context.Context, harness, name string) error {
 		cfgPath := filepath.Join(m.homeDir, ".config", harness, "mcp.json")
 		return deleteFromJSONKey(cfgPath, "mcpServers", name)
 	}
+}
+
+func deleteFromOpencode(cfgPath, itemKey string) error {
+	data, err := os.ReadFile(cfgPath)
+	if err != nil {
+		return err
+	}
+
+	var root map[string]any
+	if err := json.Unmarshal(data, &root); err != nil {
+		return err
+	}
+
+	subMap, ok := root["mcp"].(map[string]any)
+	if !ok {
+		return nil
+	}
+
+	delete(subMap, itemKey)
+	if nested, ok := subMap["servers"].(map[string]any); ok {
+		delete(nested, itemKey)
+	}
+
+	return writeJSONPretty(cfgPath, root)
 }
 
 func deleteFromJSONKey(cfgPath, rootKey, itemKey string) error {

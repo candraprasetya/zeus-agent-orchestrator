@@ -133,3 +133,41 @@ func TestMCPManagerAgyAndClaude(t *testing.T) {
 		t.Fatalf("expected 3 total servers, got %v (%d)", err, len(allList))
 	}
 }
+
+func TestMCPManagerOpenCodeNestedServers(t *testing.T) {
+	tmpDir := t.TempDir()
+	mgr := New(tmpDir)
+	ctx := context.Background()
+
+	// Add a server under opencode-v2
+	_, err := mgr.Add(ctx, AddServerRequest{
+		Name:    "figcraft",
+		Harness: "opencode-v2",
+		Type:    "local",
+		Command: "figcraft-mcp",
+	})
+	if err != nil {
+		t.Fatalf("failed to add figcraft: %v", err)
+	}
+
+	list, err := mgr.List(ctx, "opencode-v2")
+	if err != nil {
+		t.Fatalf("failed to list opencode-v2: %v", err)
+	}
+	if len(list) != 1 || list[0].Name != "figcraft" || list[0].Command != "figcraft-mcp" {
+		t.Fatalf("unexpected list: %+v", list)
+	}
+
+	// Delete
+	if err := mgr.Delete(ctx, "opencode-v2", "figcraft"); err != nil {
+		t.Fatalf("failed to delete figcraft: %v", err)
+	}
+
+	list, err = mgr.List(ctx, "opencode-v2")
+	if err != nil {
+		t.Fatalf("failed to list after delete: %v", err)
+	}
+	if len(list) != 0 {
+		t.Fatalf("expected 0 servers after delete, got %d", len(list))
+	}
+}
