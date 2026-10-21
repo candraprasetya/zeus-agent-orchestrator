@@ -17927,6 +17927,8 @@ components:
           type: string
         agentRulesFile:
           type: string
+        autoRetry:
+          type: boolean
         autoReview:
           type: boolean
         canonicalRepoURL:
@@ -17939,6 +17941,8 @@ components:
           additionalProperties:
             type: string
           type: object
+        maxRetries:
+          type: integer
         omniAndroidPath:
           type: string
         omniI18nPath:

@@ -5662,6 +5662,8 @@ func promptProjectContext(projectID domain.ProjectID, project domain.ProjectReco
 		OmniI18nPath:         cfg.OmniI18nPath,
 		WikiPath:             cfg.WikiPath,
 		TeamID:               cfg.TeamID,
+		AutoRetry:            cfg.AutoRetry,
+		MaxRetries:           cfg.MaxRetries,
 	}
 }
 

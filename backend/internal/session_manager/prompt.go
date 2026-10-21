@@ -31,6 +31,10 @@ type promptProject struct {
 	OmniI18nPath    string
 	WikiPath        string
 	TeamID          string
+
+	// Auto retry configuration
+	AutoRetry  bool
+	MaxRetries int
 }
 
 type taskPromptConfig struct {
@@ -470,6 +474,9 @@ func projectContextSection(project promptProject) string {
 	}
 	if project.WikiPath != "" {
 		res += fmt.Sprintf("\n- Wiki folder: %s", project.WikiPath)
+	}
+	if project.AutoRetry {
+		res += fmt.Sprintf("\n- Auto retry on timeout: enabled (max retries: %d)", project.MaxRetries)
 	}
 	return res
 }

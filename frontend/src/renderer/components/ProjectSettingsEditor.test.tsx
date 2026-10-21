@@ -14,6 +14,7 @@ const initialValues: ProjectSettingsDraft = {
 	workerPermissions: "auto", orchestratorPermissions: "auto", reviewerPermissions: "",
 	autoReview: true, intakeEnabled: false, intakeRepo: "", intakeAssignee: "",
 	projectType: "", omniAndroidPath: "", omnimonPath: "", omniIosPath: "", omniI18nPath: "", wikiPath: "", teamId: "",
+	autoRetry: false, maxRetries: 3,
 };
 
 function setup(cloud: boolean, save = vi.fn().mockResolvedValue({})) {

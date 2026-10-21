@@ -181,6 +181,18 @@ export function ProjectWorkersRequestReviewToggle({ checked, onCheckedChange }: 
 	return <ProjectToggleRow id="project-workers-request-review" label={t("settings.project.workersRequestReviewToggle")} description={t("settings.project.workersRequestReviewDescription")} checked={checked} onCheckedChange={onCheckedChange} />;
 }
 
+export function ProjectAutoRetryToggle({ checked, onCheckedChange }: { checked: boolean; onCheckedChange: (checked: boolean) => void }) {
+	return (
+		<ProjectToggleRow
+			id="project-auto-retry"
+			label="Auto Retry on Timeout"
+			description="Automatically retry worker sessions if a timeout occurs during task execution."
+			checked={checked}
+			onCheckedChange={onCheckedChange}
+		/>
+	);
+}
+
 function ProjectToggleRow({ id, label, description, checked, onCheckedChange }: { id: string; label: string; description: string; checked: boolean; onCheckedChange: (checked: boolean) => void }) {
 	return (
 		<SettingsRow label={label} description={description}>

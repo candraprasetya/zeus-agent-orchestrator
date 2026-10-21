@@ -276,6 +276,7 @@ function toEditorDraft(values: CloudProjectSettingsDraft): ProjectSettingsDraft 
 		workerEffort: values.worker.agentConfig.effort, orchestratorEffort: values.orchestrator.agentConfig.effort, reviewerEffort: values.reviewer.agentConfig.effort,
 		workerPermissions: values.worker.agentConfig.permissions, orchestratorPermissions: values.orchestrator.agentConfig.permissions, reviewerPermissions: values.reviewer.agentConfig.permissions,
 		projectType: "", omniAndroidPath: "", omnimonPath: "", omniIosPath: "", omniI18nPath: "", wikiPath: "", teamId: "",
+		autoRetry: false, maxRetries: 3,
 	};
 }
 

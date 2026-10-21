@@ -174,6 +174,8 @@ function SettingsBody({ project, projectId, hostId, hostConnected, onSaved, sect
 		omniI18nPath: config.omniI18nPath ?? "",
 		wikiPath: config.wikiPath ?? "",
 		teamId: config.teamId ?? "",
+		autoRetry: config.autoRetry ?? false,
+		maxRetries: config.maxRetries ?? 3,
 	};
 	const lastOrchestratorRef = useRef(config.orchestrator?.agent ?? "");
 	const replacementAttemptedRef = useRef(false);
@@ -268,6 +270,8 @@ function SettingsBody({ project, projectId, hostId, hostConnected, onSaved, sect
 					omniI18nPath: values.omniI18nPath || undefined,
 					wikiPath: values.wikiPath || undefined,
 					teamId: values.teamId || undefined,
+					autoRetry: values.autoRetry || undefined,
+					maxRetries: values.autoRetry ? values.maxRetries : undefined,
 				};
 		const { error } = await (hostId ? clientForHost(hostId) : apiClient).PUT("/api/v1/projects/{id}", {
 			params: { path: { id: projectId } },

@@ -206,6 +206,8 @@ type CreateProjectConfigInput = {
 	omniI18nPath?: string;
 	wikiPath?: string;
 	teamId?: string;
+	autoRetry?: boolean;
+	maxRetries?: number;
 };
 
 export function createProjectConfig(input: CreateProjectConfigInput): components["schemas"]["ProjectConfig"] {
@@ -221,6 +223,7 @@ export function createProjectConfig(input: CreateProjectConfigInput): components
 		...(input.omniI18nPath ? { omniI18nPath: input.omniI18nPath } : {}),
 		...(input.wikiPath ? { wikiPath: input.wikiPath } : {}),
 		...(input.teamId ? { teamId: input.teamId } : {}),
+		...(input.autoRetry ? { autoRetry: input.autoRetry, maxRetries: input.maxRetries } : {}),
 	};
 }
 

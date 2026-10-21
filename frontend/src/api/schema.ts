@@ -6272,6 +6272,7 @@ export interface components {
             agentConfig?: components["schemas"]["AgentConfig"];
             agentRules?: string;
             agentRulesFile?: string;
+            autoRetry?: boolean;
             autoReview?: boolean;
             canonicalRepoURL?: string;
             containerReap?: components["schemas"]["ContainerReapConfig"];
@@ -6279,6 +6280,7 @@ export interface components {
             env?: {
                 [key: string]: string;
             };
+            maxRetries?: number;
             omniAndroidPath?: string;
             omniI18nPath?: string;
             omniIosPath?: string;

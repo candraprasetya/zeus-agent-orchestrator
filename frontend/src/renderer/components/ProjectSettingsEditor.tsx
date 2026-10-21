@@ -6,7 +6,7 @@ import { useTranslation } from "react-i18next";
 import type { ProjectSettingsSaveState, ProjectSettingsSection as SettingsSection } from "./ProjectSettingsForm";
 import { deriveRepoHost, deriveRepoPath, IntakeFields, intakeNeedsRule } from "./IntakeFields";
 import { ProductExternalLink } from "./ProductExternalLink";
-import { AgentModelField, ProjectAutoReviewToggle, ProjectWorkersRequestReviewToggle } from "./settings/ProjectAgentRoleControls";
+import { AgentModelField, ProjectAutoRetryToggle, ProjectAutoReviewToggle, ProjectWorkersRequestReviewToggle } from "./settings/ProjectAgentRoleControls";
 import { SettingsOptionMenu } from "./settings/SettingsOptionMenu";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
@@ -46,6 +46,8 @@ export type ProjectSettingsDraft = {
 	omniI18nPath: string;
 	wikiPath: string;
 	teamId: string;
+	autoRetry: boolean;
+	maxRetries: number;
 };
 
 const roles = ["worker", "orchestrator", "reviewer"] as const;
@@ -329,6 +331,27 @@ export function ProjectSettingsEditor({ initialValues, section, capabilities, de
 					<ProjectSettingsSection title={t("settings.project.pullRequests")} grouped>
 						<ProjectAutoReviewToggle description={autoReviewDescription} checked={draft.autoReview} onCheckedChange={(autoReview) => patch({ autoReview })} />
 						{capabilities.workersRequestReview && <ProjectWorkersRequestReviewToggle checked={draft.workersRequestReview ?? false} onCheckedChange={(workersRequestReview) => patch({ workersRequestReview })} />}
+					</ProjectSettingsSection>
+					<ProjectSettingsSection title="Session Resilience & Timeout" grouped>
+						<ProjectAutoRetryToggle checked={draft.autoRetry} onCheckedChange={(autoRetry) => patch({ autoRetry })} />
+						{draft.autoRetry && (
+							<ProjectSettingsRow label="Max Retries">
+								<div className="flex items-center justify-end gap-2">
+									<Input
+										type="number"
+										min={1}
+										max={10}
+										className="h-8 w-20 text-xs bg-background/50 text-right"
+										value={draft.maxRetries}
+										onChange={(e) => {
+											const val = parseInt(e.target.value, 10);
+											patch({ maxRetries: isNaN(val) ? 1 : Math.max(1, Math.min(10, val)) });
+										}}
+									/>
+									<span className="text-xs text-muted-foreground">attempts</span>
+								</div>
+							</ProjectSettingsRow>
+						)}
 					</ProjectSettingsSection>
 				</>}
 				{generalExtra}

@@ -39,6 +39,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import { appI18n } from "../i18n";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
+import { Switch } from "./ui/switch";
 
 type TrackerIntakeConfig = components["schemas"]["TrackerIntakeConfig"];
 
@@ -53,6 +54,8 @@ export type CreateProjectAgentSelection = {
 	omniI18nPath?: string;
 	wikiPath?: string;
 	teamId?: string;
+	autoRetry?: boolean;
+	maxRetries?: number;
 };
 
 const EMPTY_INTAKE: IntakeForm = { enabled: false, repo: "", assignee: "" };
@@ -191,6 +194,8 @@ export function CreateProjectAgentSheet({
 	const [omniIosPath, setOmniIosPath] = useState<string>("");
 	const [omniI18nPath, setOmniI18nPath] = useState<string>("");
 	const [wikiPath, setWikiPath] = useState<string>("");
+	const [autoRetry, setAutoRetry] = useState<boolean>(false);
+	const [maxRetries, setMaxRetries] = useState<number>(3);
 	useEnsureAgentReadiness({
 		agentIds: [workerAgent, orchestratorAgent],
 		enabled: contentOpen && connected && (workerAgent !== "" || orchestratorAgent !== ""),
@@ -233,6 +238,8 @@ export function CreateProjectAgentSheet({
 			setOmniIosPath("");
 			setOmniI18nPath("");
 			setWikiPath("");
+			setAutoRetry(false);
+			setMaxRetries(3);
 		}
 		wasOpen.current = open;
 	}, [open]);
@@ -403,6 +410,35 @@ export function CreateProjectAgentSheet({
 					</div>
 				</div>
 			)}
+
+			<div className="pt-2 border-t border-border/40 space-y-2">
+				<div className="flex items-center justify-between">
+					<div className="space-y-0.5">
+						<Label className="text-xs font-medium text-foreground">Auto Retry on Timeout</Label>
+						<p className="text-[11px] text-muted-foreground">Automatically retry worker sessions on failure or timeout</p>
+					</div>
+					<Switch checked={autoRetry} onCheckedChange={setAutoRetry} />
+				</div>
+				{autoRetry && (
+					<div className="flex items-center justify-between pt-1">
+						<Label className="text-xs font-medium text-foreground">Max Retries</Label>
+						<div className="flex items-center gap-1.5">
+							<Input
+								type="number"
+								min={1}
+								max={10}
+								className="h-7 w-16 text-xs bg-background/50 text-right"
+								value={maxRetries}
+								onChange={(e) => {
+									const val = parseInt(e.target.value, 10);
+									setMaxRetries(isNaN(val) ? 1 : Math.max(1, Math.min(10, val)));
+								}}
+							/>
+							<span className="text-[11px] text-muted-foreground">attempts</span>
+						</div>
+					</div>
+				)}
+			</div>
 		</div>
 	);
 
@@ -544,6 +580,8 @@ export function CreateProjectAgentSheet({
 								omniI18nPath: omniI18nPath || undefined,
 								wikiPath: wikiPath || undefined,
 								teamId: teamId || undefined,
+								autoRetry: autoRetry || undefined,
+								maxRetries: autoRetry ? maxRetries : undefined,
 							})
 						}
 						setupNotice={

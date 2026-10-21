@@ -101,6 +101,11 @@ type ProjectConfig struct {
 	WikiPath string `json:"wikiPath,omitempty"`
 	// TeamID is the assigned squad/team identifier (e.g. "zeus-team-ios").
 	TeamID string `json:"teamId,omitempty"`
+
+	// AutoRetry controls whether worker sessions that time out or fail are automatically retried.
+	AutoRetry bool `json:"autoRetry,omitempty"`
+	// MaxRetries specifies the maximum number of automatic retry attempts (default 3, max 10).
+	MaxRetries int `json:"maxRetries,omitempty"`
 }
 
 // ContainerReapConfig is the project-level opt-out for #2652's Docker
@@ -187,6 +192,8 @@ const (
 	// DefaultBranchName is the branch AO selects when it creates a repository.
 	// Automatic resolution never uses it as a guess for existing repositories.
 	DefaultBranchName = "main"
+	// DefaultMaxRetries is the default number of retry attempts when AutoRetry is enabled.
+	DefaultMaxRetries = 3
 )
 
 // DefaultProjectConfig returns the config a project has when it sets nothing:
@@ -206,6 +213,9 @@ func (c ProjectConfig) WithDefaults() ProjectConfig {
 		c.DefaultBranch = def.DefaultBranch
 	}
 	c.TrackerIntake = c.TrackerIntake.WithDefaults()
+	if c.AutoRetry && c.MaxRetries == 0 {
+		c.MaxRetries = DefaultMaxRetries
+	}
 	return c
 }
 
@@ -289,6 +299,9 @@ func (c ProjectConfig) Validate() error {
 	}
 	if c.ProjectType != "" && c.ProjectType != "android" && c.ProjectType != "ios" {
 		return fmt.Errorf("projectType: must be \"android\" or \"ios\"")
+	}
+	if c.MaxRetries < 0 || c.MaxRetries > 10 {
+		return fmt.Errorf("maxRetries: must be between 0 and 10")
 	}
 	return nil
 }
