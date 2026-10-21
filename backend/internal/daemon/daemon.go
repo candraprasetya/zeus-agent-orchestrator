@@ -73,6 +73,7 @@ import (
 	"github.com/aoagents/agent-orchestrator/backend/internal/service/systeminstall"
 	usagesvc "github.com/aoagents/agent-orchestrator/backend/internal/service/usage"
 	sessionmanager "github.com/aoagents/agent-orchestrator/backend/internal/session_manager"
+	"github.com/aoagents/agent-orchestrator/backend/internal/service/skills"
 	"github.com/aoagents/agent-orchestrator/backend/internal/skillassets"
 	"github.com/aoagents/agent-orchestrator/backend/internal/storage/sqlite"
 	"github.com/aoagents/agent-orchestrator/backend/internal/terminal"
@@ -1011,6 +1012,7 @@ func Run() error {
 		ShellTerminals:     shellTermSvc,
 		Cues:               cuesvc.New(cuesvc.Deps{Store: store, Sessions: sessionSvc, Terminals: shellTermSvc}),
 		AgentAuth:          agentAuthSvc,
+		Skills:             skills.New(cfg.DataDir),
 		GitHub:             newGitHubStatusService(githubpat.New(cfg.DataDir), prReader),
 		Conversations:      chatSvc,
 		Settings:           settingsSvc,

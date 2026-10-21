@@ -253,6 +253,9 @@ var schemaNames = map[string]string{ //nolint:gosec // Public OpenAPI type names
 	"ControllersSetConversationConfigOptionRequest":        "SetConversationConfigOptionRequest",
 	"ControllersConversationSkillsResponse":                "ConversationSkillsResponse",
 	"ControllersConversationSkillResponse":                 "ConversationSkillResponse",
+	"ControllersSkillResponse":                             "SkillResponse",
+	"ControllersSkillsListResponse":                        "SkillsListResponse",
+	"ControllersImportSkillsRequest":                       "ImportSkillsRequest",
 	"ControllersConversationTurnSettingsPayload":           "ConversationTurnSettingsPayload",
 	"ControllersConversationUsagePayload":                  "ConversationUsagePayload",
 	"ControllersConversationRateLimitsPayload":             "ConversationRateLimitsPayload",
@@ -1030,6 +1033,26 @@ func shellTerminalOperations() []operation {
 			reqBody: controllers.UpdateChatHibernationRequest{},
 			resps: []respUnit{
 				{http.StatusOK, controllers.SettingsResponse{}},
+				{http.StatusBadRequest, envelope.APIError{}},
+				{http.StatusInternalServerError, envelope.APIError{}},
+				{http.StatusNotImplemented, envelope.APIError{}},
+			},
+		},
+		{
+			method: http.MethodGet, path: "/api/v1/skills", id: "listInstalledSkills", tag: "skills",
+			summary: "List all installed skills managed by AO",
+			resps: []respUnit{
+				{http.StatusOK, controllers.SkillsListResponse{}},
+				{http.StatusInternalServerError, envelope.APIError{}},
+				{http.StatusNotImplemented, envelope.APIError{}},
+			},
+		},
+		{
+			method: http.MethodPost, path: "/api/v1/skills/import", id: "importSkills", tag: "skills",
+			summary: "Import skills from a local directory into AO managed storage",
+			reqBody: controllers.ImportSkillsRequest{},
+			resps: []respUnit{
+				{http.StatusOK, controllers.SkillsListResponse{}},
 				{http.StatusBadRequest, envelope.APIError{}},
 				{http.StatusInternalServerError, envelope.APIError{}},
 				{http.StatusNotImplemented, envelope.APIError{}},

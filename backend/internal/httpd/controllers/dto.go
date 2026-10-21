@@ -2766,6 +2766,26 @@ type ConversationSkillResponse struct {
 	Source string `json:"source,omitempty"`
 }
 
+// SkillResponse describes an installed skill managed by AO.
+type SkillResponse struct {
+	Name        string   `json:"name"`
+	Description string   `json:"description"`
+	Path        string   `json:"path"`
+	Category    string   `json:"category,omitempty"`
+	Triggers    []string `json:"triggers,omitempty"`
+	IsManaged   bool     `json:"isManaged"`
+}
+
+// SkillsListResponse is the list of all installed skills.
+type SkillsListResponse struct {
+	Skills []SkillResponse `json:"skills"`
+}
+
+// ImportSkillsRequest specifies the directory from which to import skills.
+type ImportSkillsRequest struct {
+	SourcePath string `json:"sourcePath"`
+}
+
 // ConversationTurnSettingsPayload is the provider choices for the next turn. It is
 // both the request body for changing them and the echo of what is now stored.
 //

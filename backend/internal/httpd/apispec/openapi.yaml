@@ -11637,6 +11637,68 @@ paths:
       summary: ""
       tags:
       - conversations
+  /api/v1/skills:
+    get:
+      operationId: listInstalledSkills
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SkillsListResponse'
+          description: OK
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+          description: Internal Server Error
+        "501":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+          description: Not Implemented
+      summary: List all installed skills managed by AO
+      tags:
+      - skills
+  /api/v1/skills/import:
+    post:
+      operationId: importSkills
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ImportSkillsRequest'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SkillsListResponse'
+          description: OK
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+          description: Bad Request
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+          description: Internal Server Error
+        "501":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+          description: Not Implemented
+      summary: Import skills from a local directory into AO managed storage
+      tags:
+      - skills
   /api/v1/system/github-auth:
     get:
       operationId: getGitHubAuthRequirement
@@ -16098,6 +16160,13 @@ components:
       required:
       - report
       type: object
+    ImportSkillsRequest:
+      properties:
+        sourcePath:
+          type: string
+      required:
+      - sourcePath
+      type: object
     ImportStatusResponse:
       properties:
         available:
@@ -19338,6 +19407,37 @@ components:
       - text
       - state
       - createdAt
+      type: object
+    SkillResponse:
+      properties:
+        category:
+          type: string
+        description:
+          type: string
+        isManaged:
+          type: boolean
+        name:
+          type: string
+        path:
+          type: string
+        triggers:
+          items:
+            type: string
+          type: array
+      required:
+      - name
+      - description
+      - path
+      - isManaged
+      type: object
+    SkillsListResponse:
+      properties:
+        skills:
+          items:
+            $ref: '#/components/schemas/SkillResponse'
+          type: array
+      required:
+      - skills
       type: object
     SpawnOrchestratorRequest:
       properties:

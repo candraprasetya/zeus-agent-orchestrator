@@ -76,6 +76,8 @@ type APIDeps struct {
 	// GitHub is the local GitHub PAT + repos surface.
 	GitHub            controllers.GitHubPATService
 	AgentSwitchPolicy AgentSwitchPolicyControl
+	// Skills is the skills management service.
+	Skills controllers.SkillsService
 	// LinkPreview unfurls external URLs for the renderer's hover cards; nil
 	// leaves the route answering 501.
 	LinkPreview controllers.LinkPreviewService
@@ -147,6 +149,7 @@ type API struct {
 	endpoints     *controllers.EndpointsController
 	systemInstall *controllers.SystemInstallController
 	agentAuth     *controllers.AgentAuthController
+	skills        *controllers.SkillsController
 	linkPreview   *controllers.LinkPreviewController
 	github        *controllers.GitHubController
 	events        *EventsController
@@ -209,6 +212,7 @@ func newAPIWithLogger(cfg config.Config, deps APIDeps, log *slog.Logger) *API {
 		endpoints:     &controllers.EndpointsController{Source: deps.Endpoints},
 		systemInstall: &controllers.SystemInstallController{Installer: deps.Installer},
 		agentAuth:     &controllers.AgentAuthController{Svc: deps.AgentAuth},
+		skills:        &controllers.SkillsController{Svc: deps.Skills},
 		linkPreview:   &controllers.LinkPreviewController{Svc: deps.LinkPreview},
 		github:        &controllers.GitHubController{Svc: deps.GitHub},
 		events:        &EventsController{Source: deps.CDC, Live: deps.Events},
@@ -278,6 +282,7 @@ func (a *API) Register(root chi.Router) {
 			a.endpoints.Register(r)
 			a.systemInstall.Register(r)
 			a.agentAuth.Register(r)
+			a.skills.Register(r)
 			a.linkPreview.Register(r)
 			a.github.Register(r)
 			// Sibling REST controllers plug in here.
