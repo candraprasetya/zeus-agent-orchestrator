@@ -356,6 +356,7 @@ export const Save = createHugeIcon("save", _FloppyDiskIcon);
 export const ScrollText = createHugeIcon("scroll-text", _ScrollTextIcon);
 export const Search = createHugeIcon("search", _SearchIcon);
 export const SearchCheck = createHugeIcon("search-check", _SearchListIcon);
+export const SearchX = createHugeIcon("search-x", _SearchIcon);
 export const Send = createHugeIcon("send", _SendIcon);
 export const Server = createHugeIcon("server", _ServerIcon);
 export const Settings = createHugeIcon("settings", _Settings01Icon);
