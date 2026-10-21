@@ -17760,6 +17760,14 @@ components:
           additionalProperties:
             type: string
           type: object
+        omniAndroidPath:
+          type: string
+        omniI18nPath:
+          type: string
+        omniIosPath:
+          type: string
+        omnimonPath:
+          type: string
         orchestrator:
           $ref: '#/components/schemas/RoleOverride'
         orchestratorRules:
@@ -17772,6 +17780,8 @@ components:
           items:
             type: string
           type: array
+        projectType:
+          type: string
         reviewers:
           items:
             $ref: '#/components/schemas/DomainReviewerConfig'
@@ -17782,8 +17792,12 @@ components:
           items:
             type: string
           type: array
+        teamId:
+          type: string
         trackerIntake:
           $ref: '#/components/schemas/TrackerIntakeConfig'
+        wikiPath:
+          type: string
         worker:
           $ref: '#/components/schemas/RoleOverride'
         workersRequestReview:

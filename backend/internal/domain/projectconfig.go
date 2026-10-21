@@ -83,6 +83,21 @@ type ProjectConfig struct {
 	// the feature but check with the user or orchestrator before using it.
 	// Read at spawn, when the worker prompt is built.
 	WorkersRequestReview bool `json:"workersRequestReview,omitempty"`
+
+	// ProjectType specifies the mobile platform: "android", "ios", or empty.
+	ProjectType string `json:"projectType,omitempty"`
+	// OmniAndroidPath is the folder path for Omni-Android repository.
+	OmniAndroidPath string `json:"omniAndroidPath,omitempty"`
+	// OmnimonPath is the folder path for Omnimon repository.
+	OmnimonPath string `json:"omnimonPath,omitempty"`
+	// OmniIosPath is the folder path for Omni-IOS repository.
+	OmniIosPath string `json:"omniIosPath,omitempty"`
+	// OmniI18nPath is the folder path for omni-i18n repository.
+	OmniI18nPath string `json:"omniI18nPath,omitempty"`
+	// WikiPath is the folder path for the Wiki/OKF documentation vault.
+	WikiPath string `json:"wikiPath,omitempty"`
+	// TeamID is the assigned squad/team identifier (e.g. "zeus-team-ios").
+	TeamID string `json:"teamId,omitempty"`
 }
 
 // ContainerReapConfig is the project-level opt-out for #2652's Docker
@@ -262,6 +277,9 @@ func (c ProjectConfig) Validate() error {
 	}
 	if err := c.TrackerIntake.Validate(); err != nil {
 		return err
+	}
+	if c.ProjectType != "" && c.ProjectType != "android" && c.ProjectType != "ios" {
+		return fmt.Errorf("projectType: must be \"android\" or \"ios\"")
 	}
 	return nil
 }

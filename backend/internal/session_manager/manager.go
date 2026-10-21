@@ -5646,6 +5646,13 @@ func promptProjectContext(projectID domain.ProjectID, project domain.ProjectReco
 		Path:          project.Path,
 
 		WorkersRequestReview: cfg.WorkersRequestReview,
+		ProjectType:          cfg.ProjectType,
+		OmniAndroidPath:      cfg.OmniAndroidPath,
+		OmnimonPath:          cfg.OmnimonPath,
+		OmniIosPath:          cfg.OmniIosPath,
+		OmniI18nPath:         cfg.OmniI18nPath,
+		WikiPath:             cfg.WikiPath,
+		TeamID:               cfg.TeamID,
 	}
 }
 

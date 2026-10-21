@@ -167,6 +167,13 @@ function SettingsBody({ project, projectId, hostId, hostConnected, onSaved, sect
 		intakeEnabled: intake.enabled ?? false,
 		intakeRepo: intake.repo ?? "",
 		intakeAssignee: intake.assignee ?? "",
+		projectType: config.projectType ?? "",
+		omniAndroidPath: config.omniAndroidPath ?? "",
+		omnimonPath: config.omnimonPath ?? "",
+		omniIosPath: config.omniIosPath ?? "",
+		omniI18nPath: config.omniI18nPath ?? "",
+		wikiPath: config.wikiPath ?? "",
+		teamId: config.teamId ?? "",
 	};
 	const lastOrchestratorRef = useRef(config.orchestrator?.agent ?? "");
 	const replacementAttemptedRef = useRef(false);
@@ -254,6 +261,13 @@ function SettingsBody({ project, projectId, hostId, hostConnected, onSaved, sect
 					),
 					autoReview: values.autoReview,
 					workersRequestReview: values.workersRequestReview || undefined,
+					projectType: values.projectType || undefined,
+					omniAndroidPath: values.omniAndroidPath || undefined,
+					omnimonPath: values.omnimonPath || undefined,
+					omniIosPath: values.omniIosPath || undefined,
+					omniI18nPath: values.omniI18nPath || undefined,
+					wikiPath: values.wikiPath || undefined,
+					teamId: values.teamId || undefined,
 				};
 		const { error } = await (hostId ? clientForHost(hostId) : apiClient).PUT("/api/v1/projects/{id}", {
 			params: { path: { id: projectId } },
@@ -324,7 +338,7 @@ function SettingsBody({ project, projectId, hostId, hostConnected, onSaved, sect
 		}
 	};
 	return <ProjectSettingsEditor initialValues={initialValues} section={section} disabled={!hostConnected}
-		capabilities={{ workflow: !isScratchProject, sessionPrefix: !isScratchProject, intake: intakeVisible, reviewer: !isScratchProject, requiredAgents: true, workersRequestReview: !isScratchProject }}
+		capabilities={{ workflow: !isScratchProject, sessionPrefix: !isScratchProject, intake: intakeVisible, reviewer: !isScratchProject, requiredAgents: true, workersRequestReview: !isScratchProject, mobileSettings: !isScratchProject }}
 		details={[{ label: t("settings.project.path"), value: project.path, href: hostId ? undefined : `file://${encodeURI(project.path)}` }, { label: t("settings.project.repo"), value: project.repo || "—", href: project.repo ? repositoryHref(project.repo) : undefined }]}
 		workspaceRepos={project.kind === "workspace" ? project.workspaceRepos ?? [] : undefined} repository={project.repo}
 		modelScope={() => projectId} defaultReviewer={(draft) => WORKER_DEFAULT_REVIEWERS[draft.workerAgent] ?? "claude-code"}

@@ -6217,14 +6217,21 @@ export interface components {
             env?: {
                 [key: string]: string;
             };
+            omniAndroidPath?: string;
+            omniI18nPath?: string;
+            omniIosPath?: string;
+            omnimonPath?: string;
             orchestrator?: components["schemas"]["RoleOverride"];
             orchestratorRules?: string;
             postCreate?: string[];
             preRemove?: string[];
+            projectType?: string;
             reviewers?: components["schemas"]["DomainReviewerConfig"][];
             sessionPrefix?: string;
             symlinks?: string[];
+            teamId?: string;
             trackerIntake?: components["schemas"]["TrackerIntakeConfig"];
+            wikiPath?: string;
             worker?: components["schemas"]["RoleOverride"];
             workersRequestReview?: boolean;
         };

@@ -23,6 +23,14 @@ type promptProject struct {
 	// WorkersRequestReview is the project's opt-in for workers to request an
 	// AO review of their own PR when it is ready.
 	WorkersRequestReview bool
+	// Mobile / Zeus workspace configuration
+	ProjectType     string
+	OmniAndroidPath string
+	OmnimonPath     string
+	OmniIosPath     string
+	OmniI18nPath    string
+	WikiPath        string
+	TeamID          string
 }
 
 type taskPromptConfig struct {
@@ -434,13 +442,36 @@ If this task starts its own Docker containers (a local database, a queue, any ad
 }
 
 func projectContextSection(project promptProject) string {
-	return fmt.Sprintf(`## Project Context
+	res := fmt.Sprintf(`## Project Context
 
 - Project: %s
 - Name: %s
 - Repository: %s
 - Default branch: %s
 - Path: %s`, project.ID, projectName(project), projectValue(project.Repo), projectValue(project.DefaultBranch), projectValue(project.Path))
+
+	if project.ProjectType != "" {
+		res += fmt.Sprintf("\n- Project type: %s", project.ProjectType)
+	}
+	if project.TeamID != "" {
+		res += fmt.Sprintf("\n- Assigned squad: %s", project.TeamID)
+	}
+	if project.OmniAndroidPath != "" {
+		res += fmt.Sprintf("\n- Omni-Android folder: %s", project.OmniAndroidPath)
+	}
+	if project.OmnimonPath != "" {
+		res += fmt.Sprintf("\n- Omnimon folder: %s", project.OmnimonPath)
+	}
+	if project.OmniIosPath != "" {
+		res += fmt.Sprintf("\n- Omni-IOS folder: %s", project.OmniIosPath)
+	}
+	if project.OmniI18nPath != "" {
+		res += fmt.Sprintf("\n- omni-i18n folder: %s", project.OmniI18nPath)
+	}
+	if project.WikiPath != "" {
+		res += fmt.Sprintf("\n- Wiki folder: %s", project.WikiPath)
+	}
+	return res
 }
 
 func projectName(project promptProject) string {

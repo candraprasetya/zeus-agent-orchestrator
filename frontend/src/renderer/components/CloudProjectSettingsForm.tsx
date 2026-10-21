@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ProjectSettingsRow, ProjectSettingsSection as SettingsGroup, ProjectSettingsValueRow } from "@aoagents/product-ui";
-import { TriangleAlert } from "lucide-react";
+import { TriangleAlert } from "@/icons/hugeicons-adapter";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useCloudCp } from "../hooks/useCloudCp";
@@ -273,6 +273,7 @@ function toEditorDraft(values: CloudProjectSettingsDraft): ProjectSettingsDraft 
 		workerMode: values.worker.agentConfig.mode, orchestratorMode: values.orchestrator.agentConfig.mode, reviewerMode: values.reviewer.agentConfig.mode,
 		workerEffort: values.worker.agentConfig.effort, orchestratorEffort: values.orchestrator.agentConfig.effort, reviewerEffort: values.reviewer.agentConfig.effort,
 		workerPermissions: values.worker.agentConfig.permissions, orchestratorPermissions: values.orchestrator.agentConfig.permissions, reviewerPermissions: values.reviewer.agentConfig.permissions,
+		projectType: "", omniAndroidPath: "", omnimonPath: "", omniIosPath: "", omniI18nPath: "", wikiPath: "", teamId: "",
 	};
 }
 

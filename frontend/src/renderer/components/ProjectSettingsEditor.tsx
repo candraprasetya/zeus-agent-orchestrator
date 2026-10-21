@@ -1,6 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import { MAX_PROJECT_DISPLAY_NAME_LEN, ProjectSettingsFormView, ProjectSettingsInputRow, ProjectSettingsRow, ProjectSettingsSection, ProjectSettingsValueRow } from "@aoagents/product-ui";
-import { Pencil } from "lucide-react";
+import { FolderOpen, Pencil } from "@/icons/hugeicons-adapter";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import type { ProjectSettingsSaveState, ProjectSettingsSection as SettingsSection } from "./ProjectSettingsForm";
@@ -9,6 +9,10 @@ import { ProductExternalLink } from "./ProductExternalLink";
 import { AgentModelField, ProjectAutoReviewToggle, ProjectWorkersRequestReviewToggle } from "./settings/ProjectAgentRoleControls";
 import { SettingsOptionMenu } from "./settings/SettingsOptionMenu";
 import { Button } from "./ui/button";
+import { Input } from "./ui/input";
+import { useTeams } from "../hooks/useTeams";
+import { aoBridge } from "../lib/bridge";
+import { apiClient } from "../lib/api-client";
 
 export type ProjectSettingsDraft = {
 	displayName: string;
@@ -35,6 +39,13 @@ export type ProjectSettingsDraft = {
 	intakeEnabled: boolean;
 	intakeRepo: string;
 	intakeAssignee: string;
+	projectType: string;
+	omniAndroidPath: string;
+	omnimonPath: string;
+	omniIosPath: string;
+	omniI18nPath: string;
+	wikiPath: string;
+	teamId: string;
 };
 
 const roles = ["worker", "orchestrator", "reviewer"] as const;
@@ -54,6 +65,7 @@ type Capabilities = {
 	reviewer: boolean;
 	requiredAgents: boolean;
 	workersRequestReview?: boolean;
+	mobileSettings?: boolean;
 	nameLimit?: number;
 	requiredBranch?: boolean;
 	/** Cloud defaults and tuning belong to its runtime, rather than the local catalog. */
@@ -99,6 +111,7 @@ export function ProjectSettingsEditor({ initialValues, section, capabilities, de
 	disabled?: boolean;
 }) {
 	const { t } = useTranslation();
+	const { teams } = useTeams(!disabled);
 	const [draft, setDraft] = useState(initialValues);
 	const saved = useRef(JSON.stringify(initialValues));
 	const failedKey = useRef<string | undefined>(undefined);
@@ -171,6 +184,139 @@ export function ProjectSettingsEditor({ initialValues, section, capabilities, de
 					<ProjectSettingsInputRow id="projectName" label={t("settings.project.name")} editLabel={t("settings.field.edit", { label: t("settings.project.name") })} editIcon={<Pencil className="settings-inline-edit-icon" aria-hidden="true" />} value={draft.displayName} onChange={(displayName) => patch({ displayName })} />
 					{details.map((detail) => <ProjectSettingsValueRow key={detail.label} {...detail} externalLink={ProductExternalLink} />)}
 				</ProjectSettingsSection>
+				{capabilities.mobileSettings !== false && (
+					<ProjectSettingsSection title="Mobile & Squad Configuration" grouped>
+						<ProjectSettingsRow label="Project Type">
+							<SettingsOptionMenu
+								aria-label="Project Type"
+								value={draft.projectType}
+								options={[
+									{ value: "", label: "None (Not specified)" },
+									{ value: "android", label: "Android" },
+									{ value: "ios", label: "iOS" },
+								]}
+								placeholder="Select Project Type"
+								triggerClassName="w-fit"
+								onChange={(projectType) => {
+									const updates: Partial<ProjectSettingsDraft> = { projectType };
+									if (projectType === "ios" && !draft.teamId) updates.teamId = "zeus-team-ios";
+									else if (projectType === "android" && !draft.teamId) updates.teamId = "zeus-team-android";
+									patch(updates);
+								}}
+							/>
+						</ProjectSettingsRow>
+						<ProjectSettingsRow label="Assigned Squad">
+							<SettingsOptionMenu
+								aria-label="Assigned Squad"
+								value={draft.teamId}
+								options={[
+									{ value: "", label: "None (No squad)" },
+									...teams.map((t) => ({ value: t.id, label: t.name })),
+								]}
+								placeholder="Select Squad"
+								triggerClassName="w-fit"
+								onChange={(teamId) => {
+									const updates: Partial<ProjectSettingsDraft> = { teamId };
+									if (teamId === "zeus-team-ios" && !draft.projectType) updates.projectType = "ios";
+									else if (teamId === "zeus-team-android" && !draft.projectType) updates.projectType = "android";
+									patch(updates);
+								}}
+							/>
+						</ProjectSettingsRow>
+						{draft.projectType === "android" && (
+							<>
+								<ProjectSettingsRow label="Omni-Android folder">
+									<FolderBrowseInput
+										value={draft.omniAndroidPath}
+										placeholder="/path/to/Omni-Android"
+										onChange={(val) => {
+											patch({ omniAndroidPath: val });
+											void checkAndAutoDetectWiki(val, draft.wikiPath, (wiki) => patch({ wikiPath: wiki }));
+										}}
+										onBrowse={async () => {
+											const picked = await aoBridge.app.chooseDirectory({
+												title: "Select Omni-Android Directory",
+												defaultPath: draft.omniAndroidPath || undefined,
+											});
+											if (picked) {
+												patch({ omniAndroidPath: picked });
+												void checkAndAutoDetectWiki(picked, draft.wikiPath, (wiki) => patch({ wikiPath: wiki }));
+											}
+										}}
+									/>
+								</ProjectSettingsRow>
+								<ProjectSettingsRow label="Omnimon folder">
+									<FolderBrowseInput
+										value={draft.omnimonPath}
+										placeholder="/path/to/Omnimon"
+										onChange={(val) => patch({ omnimonPath: val })}
+										onBrowse={async () => {
+											const picked = await aoBridge.app.chooseDirectory({
+												title: "Select Omnimon Directory",
+												defaultPath: draft.omnimonPath || undefined,
+											});
+											if (picked) patch({ omnimonPath: picked });
+										}}
+									/>
+								</ProjectSettingsRow>
+							</>
+						)}
+						{draft.projectType === "ios" && (
+							<ProjectSettingsRow label="Omni-IOS folder">
+								<FolderBrowseInput
+									value={draft.omniIosPath}
+									placeholder="/path/to/Omni-IOS"
+									onChange={(val) => {
+										patch({ omniIosPath: val });
+										void checkAndAutoDetectWiki(val, draft.wikiPath, (wiki) => patch({ wikiPath: wiki }));
+									}}
+									onBrowse={async () => {
+										const picked = await aoBridge.app.chooseDirectory({
+											title: "Select Omni-IOS Directory",
+											defaultPath: draft.omniIosPath || undefined,
+										});
+										if (picked) {
+											patch({ omniIosPath: picked });
+											void checkAndAutoDetectWiki(picked, draft.wikiPath, (wiki) => patch({ wikiPath: wiki }));
+										}
+									}}
+								/>
+							</ProjectSettingsRow>
+						)}
+						{(draft.projectType === "ios" || draft.projectType === "android") && (
+							<>
+								<ProjectSettingsRow label="omni-i18n folder">
+									<FolderBrowseInput
+										value={draft.omniI18nPath}
+										placeholder="/path/to/omni-i18n"
+										onChange={(val) => patch({ omniI18nPath: val })}
+										onBrowse={async () => {
+											const picked = await aoBridge.app.chooseDirectory({
+												title: "Select omni-i18n Directory",
+												defaultPath: draft.omniI18nPath || undefined,
+											});
+											if (picked) patch({ omniI18nPath: picked });
+										}}
+									/>
+								</ProjectSettingsRow>
+								<ProjectSettingsRow label="Wiki folder">
+									<FolderBrowseInput
+										value={draft.wikiPath}
+										placeholder="Auto-detected or select wiki folder..."
+										onChange={(val) => patch({ wikiPath: val })}
+										onBrowse={async () => {
+											const picked = await aoBridge.app.chooseDirectory({
+												title: "Select Wiki Directory",
+												defaultPath: draft.wikiPath || undefined,
+											});
+											if (picked) patch({ wikiPath: picked });
+										}}
+									/>
+								</ProjectSettingsRow>
+							</>
+						)}
+					</ProjectSettingsSection>
+				)}
 				{workspaceRepos && <ProjectSettingsSection title={t("settings.project.workspaceRepos")} grouped>
 					{workspaceRepos.length ? workspaceRepos.map((repo) => <ProjectSettingsRow key={repo.name} label={repo.name}><span className="settings-row-value">{repo.relativePath}{repo.repo ? ` · ${repo.repo}` : ""}</span></ProjectSettingsRow>) : <div className="settings-row-bar text-sm text-settings-muted">{t("settings.project.childReposEmpty")}</div>}
 				</ProjectSettingsSection>}
@@ -237,4 +383,58 @@ function ProjectRolePermissions({ role, agent, value, runtimeDefaults, onChange 
 	const values = runtimeDefaults ? ["", "default", "auto", ...(agent === "opencode" ? [] : ["accept-edits"]), "bypass-permissions"] : [...(agent === "codex" ? [] : ["default"]), "auto", "accept-edits", "bypass-permissions"];
 	const options = values.map((permission) => ({ value: permission, label: permission === "" ? t("settings.cloudProject.sessionPolicy") : permission === "default" ? t(agent === "claude-code" ? "settings.project.permissionUseClaude" : "settings.project.permissionUseAgent") : t(permission === "accept-edits" ? "settings.project.permissionAcceptEdits" : permission === "auto" ? "settings.project.permissionAuto" : "settings.project.permissionBypass") }));
 	return <SettingsOptionMenu aria-label={label} value={runtimeDefaults ? value : value === "default" && agent === "codex" ? "bypass-permissions" : value || "auto"} options={options} disabled={runtimeDefaults && !agent} placeholder={t("settings.project.permissionNotReported")} triggerClassName="w-fit" onChange={onChange} />;
+}
+
+function FolderBrowseInput({
+	value,
+	placeholder,
+	onChange,
+	onBrowse,
+}: {
+	value: string;
+	placeholder?: string;
+	onChange: (value: string) => void;
+	onBrowse: () => void;
+}) {
+	return (
+		<div className="flex w-full max-w-sm items-center gap-1.5">
+			<Input
+				value={value}
+				placeholder={placeholder}
+				onChange={(e) => onChange(e.target.value)}
+				className="h-8 text-xs font-mono bg-background/50"
+			/>
+			<Button
+				type="button"
+				variant="outline"
+				size="sm"
+				className="h-8 shrink-0 px-2.5 text-xs gap-1.5"
+				onClick={onBrowse}
+			>
+				<FolderOpen className="size-3.5" />
+				Browse
+			</Button>
+		</div>
+	);
+}
+
+async function checkAndAutoDetectWiki(
+	rootPath: string,
+	currentWiki: string,
+	onFound: (wikiPath: string) => void,
+) {
+	if (!rootPath.trim() || currentWiki.trim()) return;
+	try {
+		const { data } = await apiClient.GET("/api/v1/fs/dirs", {
+			params: { query: { path: rootPath.trim() } },
+		});
+		if (data?.entries) {
+			const found = data.entries.find((e) => e.name.toLowerCase() === "wiki");
+			if (found) {
+				onFound(found.path);
+			}
+		}
+	} catch {
+		// Ignore listing errors
+	}
 }
