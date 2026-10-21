@@ -12,8 +12,11 @@ import { useSideChatsAvailable } from "../../lib/side-chats";
  */
 
 import { AlertTriangle, CheckCircle2, Loader2, X } from "@/icons/hugeicons-adapter";
+import { useQuery } from "@tanstack/react-query";
 import { memo, useEffect, useRef, useState, type ReactNode } from "react";
 import { useTranslation } from "react-i18next";
+import { apiClient, apiErrorMessage } from "../../lib/api-client";
+import { clientForHost } from "../../lib/hosts";
 import {
 	findActiveAgentSwitch,
 	isTerminalAgentSwitch,
@@ -231,6 +234,61 @@ export const SessionChatSurface = memo(function SessionChatSurface({
 		snapshot?.controller?.state === "busy" || commands.busy || acceptedLocalWorkPending;
 	const hasRunningTurn = Boolean(snapshot?.turns.some((turn) => turn.state === "running"));
 	const queuedTurnCount = snapshot?.turns.filter((turn) => turn.state === "queued").length ?? 0;
+
+	const projectQuery = useQuery({
+		queryKey: hostId ? ["project", hostId, session.workspaceId] : ["project", session.workspaceId],
+		enabled: Boolean(session.workspaceId),
+		queryFn: async () => {
+			const { data, error } = await (hostId ? clientForHost(hostId) : apiClient).GET("/api/v1/projects/{id}", {
+				params: { path: { id: session.workspaceId } },
+			});
+			if (error) throw new Error(apiErrorMessage(error));
+			return data?.project ?? null;
+		},
+		staleTime: 30_000,
+	});
+
+	const autoRetryConfig = projectQuery.data?.config?.autoRetry ?? false;
+	const maxRetriesConfig = projectQuery.data?.config?.maxRetries ?? 3;
+	const autoRetryAttemptedRef = useRef<Set<string>>(new Set());
+
+	useEffect(() => {
+		if (!autoRetryConfig || !snapshot || commands.retryControl.pending || controllerBusy || hasRunningTurn) {
+			return;
+		}
+
+		const turns = snapshot.turns;
+		if (turns.length === 0) return;
+		const latestTurn = turns[turns.length - 1];
+		if (!latestTurn || latestTurn.state !== "failed" || !latestTurn.providerTurnId) {
+			return;
+		}
+
+		if (autoRetryAttemptedRef.current.has(latestTurn.id) || latestTurn.hasRetryAttempt) {
+			return;
+		}
+
+		let attempts = 0;
+		let curr: typeof latestTurn | undefined = latestTurn;
+		while (curr && curr.retryOfTurnId) {
+			attempts++;
+			curr = turns.find((t) => t.id === curr!.retryOfTurnId);
+		}
+
+		if (attempts >= maxRetriesConfig) {
+			return;
+		}
+
+		autoRetryAttemptedRef.current.add(latestTurn.id);
+
+		const timer = window.setTimeout(() => {
+			void commands.retryControl.retry(latestTurn.id).catch(() => undefined);
+		}, 1500);
+
+		return () => {
+			window.clearTimeout(timer);
+		};
+	}, [autoRetryConfig, maxRetriesConfig, snapshot, commands.retryControl, controllerBusy, hasRunningTurn]);
 	useEffect(() => {
 		if (acceptedLocalTurnObserved && pendingAcceptedTurnId) {
 			acknowledgeAcceptedTurn(pendingAcceptedTurnId);

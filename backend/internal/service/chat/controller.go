@@ -1587,7 +1587,7 @@ func (c *Controller) retryTurnLocked(ctx context.Context, turnID string, autoRes
 	if !prompt.ActiveLineage {
 		return domain.ConversationTurn{}, fmt.Errorf("%w: %s", ErrRetryStaleBranch, turnID)
 	}
-	if prompt.Origin != domain.MessageOriginHuman {
+	if prompt.Origin != domain.MessageOriginHuman && prompt.Origin != domain.MessageOriginAutomation {
 		return domain.ConversationTurn{}, fmt.Errorf("%w: %s", ErrTurnNotRetryable, turnID)
 	}
 

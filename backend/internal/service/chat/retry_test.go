@@ -501,14 +501,14 @@ func TestRetrySourceRemainsConsumedWhenAttemptIsEditedOntoAnotherBranch(t *testi
 	}
 }
 
-func TestRetryTurnRefusesNonHumanPrompt(t *testing.T) {
+func TestRetryTurnRefusesDaemonPrompt(t *testing.T) {
 	h := newHarness(t)
 	ctx := context.Background()
 
 	turn, err := h.svc.Send(ctx, testSession, ports.ChatUserMessage{
-		Text:            "automated relay",
+		Text:            "daemon relay",
 		ClientMessageID: "cm-5",
-		Origin:          domain.MessageOriginAutomation,
+		Origin:          domain.MessageOriginDaemon,
 	})
 	if err != nil {
 		t.Fatalf("Send: %v", err)
@@ -522,7 +522,36 @@ func TestRetryTurnRefusesNonHumanPrompt(t *testing.T) {
 	failedTurnSnapshot(t, h, turn.ID)
 
 	if _, err := h.svc.RetryTurn(ctx, testSession, turn.ID); !errors.Is(err, chatsvc.ErrTurnNotRetryable) {
-		t.Fatalf("RetryTurn on automation-origin turn = %v, want ErrTurnNotRetryable", err)
+		t.Fatalf("RetryTurn on daemon-origin turn = %v, want ErrTurnNotRetryable", err)
+	}
+}
+
+func TestRetryTurnAllowsAutomationPrompt(t *testing.T) {
+	h := newHarness(t)
+	ctx := context.Background()
+
+	turn, err := h.svc.Send(ctx, testSession, ports.ChatUserMessage{
+		Text:            "automation task prompt",
+		ClientMessageID: "cm-auto",
+		Origin:          domain.MessageOriginAutomation,
+	})
+	if err != nil {
+		t.Fatalf("Send: %v", err)
+	}
+	h.conv.emit(ports.ChatEvent{
+		Kind:           ports.ChatEventTurnCompleted,
+		ProviderTurnID: turn.ProviderTurnID,
+		TurnState:      domain.TurnStateFailed,
+		Err:            errors.New("boom"),
+	})
+	failedTurnSnapshot(t, h, turn.ID)
+
+	retried, err := h.svc.RetryTurn(ctx, testSession, turn.ID)
+	if err != nil {
+		t.Fatalf("RetryTurn on automation-origin turn failed: %v", err)
+	}
+	if retried.ID == "" || retried.ID == turn.ID {
+		t.Fatalf("RetryTurn returned unexpected turn id %q", retried.ID)
 	}
 }
 

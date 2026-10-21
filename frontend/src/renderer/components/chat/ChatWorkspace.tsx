@@ -3914,7 +3914,9 @@ export function Timeline({
 							retryControl &&
 							retryableTurn &&
 							group.turnId !== composerRecoveryTurnId &&
-							(groupHasHumanPrompt(group) || Boolean(retryableTurn.usageLimit && retryableTurn.hasHumanPrompt))
+							(retryableTurn.usageLimit
+								? Boolean(retryableTurn.hasHumanPrompt)
+								: groupHasRetryablePrompt(group))
 								? {
 										onRetry: () => {
 											void Promise.resolve(retryTurn(group.turnId as string)).catch(
@@ -4795,6 +4797,12 @@ function groupPreview(group: TimelineGroup): GroupPreview {
 function groupHasHumanPrompt(group: TimelineGroup): boolean {
 	return group.items.some(
 		(item) => item.kind === "message" && item.role === "user" && item.origin === "human",
+	);
+}
+
+function groupHasRetryablePrompt(group: TimelineGroup): boolean {
+	return group.items.some(
+		(item) => item.kind === "message" && item.role === "user" && (item.origin === "human" || item.origin === "automation"),
 	);
 }
 
