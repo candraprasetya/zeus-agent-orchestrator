@@ -2802,6 +2802,51 @@ type ImportSkillsRequest struct {
 	SourcePath string `json:"sourcePath"`
 }
 
+// MCPServerResponse describes a configured MCP server.
+type MCPServerResponse struct {
+	Name       string            `json:"name"`
+	Harness    string            `json:"harness"`
+	Type       string            `json:"type"`
+	Command    string            `json:"command,omitempty"`
+	Args       []string          `json:"args,omitempty"`
+	URL        string            `json:"url,omitempty"`
+	Env        map[string]string `json:"env,omitempty"`
+	ConfigPath string            `json:"configPath,omitempty"`
+	Enabled    bool              `json:"enabled"`
+}
+
+// MCPServersListResponse is the list of configured MCP servers.
+type MCPServersListResponse struct {
+	Servers []MCPServerResponse `json:"servers"`
+}
+
+// AddMCPServerRequest specifies details to add an MCP server.
+type AddMCPServerRequest struct {
+	Name    string            `json:"name"`
+	Harness string            `json:"harness"`
+	Type    string            `json:"type"`
+	Command string            `json:"command,omitempty"`
+	Args    []string          `json:"args,omitempty"`
+	URL     string            `json:"url,omitempty"`
+	Env     map[string]string `json:"env,omitempty"`
+}
+
+// MCPServerNameParam is the {name} path parameter for an MCP server.
+type MCPServerNameParam struct {
+	Name string `path:"name" description:"MCP server identifier."`
+}
+
+// ListMCPServersQuery is the query string parameter container for listing MCP servers.
+type ListMCPServersQuery struct {
+	Harness string `query:"harness" description:"Filter by harness (e.g. opencode, agy, claude, all)."`
+}
+
+// DeleteMCPServerQuery is the query string parameter container for deleting an MCP server.
+type DeleteMCPServerQuery struct {
+	Harness string `query:"harness" description:"Target harness (e.g. opencode, agy, claude)."`
+}
+
+
 // TeamIDParam is the {teamId} path parameter.
 type TeamIDParam struct {
 	TeamID string `path:"teamId" description:"Squad identifier."`

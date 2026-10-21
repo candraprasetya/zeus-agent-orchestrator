@@ -16,6 +16,7 @@ import { ReportProblemContent } from "./ReportProblemContent";
 import { RemoteHostsSettings } from "./RemoteHostsSettings";
 import { SettingsSection } from "./SettingsSection";
 import { SkillsSection } from "./SkillsSection";
+import { McpServersSection } from "./McpServersSection";
 import { TeamsSection } from "./TeamsSection";
 
 /** The memory window's own blocks, loaded only when the page is opened: it
@@ -94,6 +95,12 @@ const globalSettingsCatalog: SettingsCatalogItem[] = [
 		icon: Sparkles,
 		label: (t) => t("settings.skills.title", "Skills"),
 		render: (_t, titleHidden) => <SkillsSection titleHidden={titleHidden} />,
+	},
+	{
+		id: "mcp",
+		icon: Server,
+		label: (t) => t("settings.mcp.title", "MCP Servers"),
+		render: (_t, titleHidden) => <McpServersSection titleHidden={titleHidden} />,
 	},
 	{
 		id: "billing",

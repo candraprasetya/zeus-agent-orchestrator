@@ -3109,6 +3109,121 @@ paths:
       summary: Fetch link-preview metadata (Open Graph) for an external URL
       tags:
       - link-preview
+  /api/v1/mcp/servers:
+    get:
+      operationId: listMCPServers
+      parameters:
+      - description: Filter by harness (e.g. opencode, agy, claude, all).
+        in: query
+        name: harness
+        schema:
+          description: Filter by harness (e.g. opencode, agy, claude, all).
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MCPServersListResponse'
+          description: OK
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+          description: Internal Server Error
+        "501":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+          description: Not Implemented
+      summary: List configured MCP servers
+      tags:
+      - mcp
+    post:
+      operationId: addMCPServer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddMCPServerRequest'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MCPServerResponse'
+          description: OK
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+          description: Bad Request
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+          description: Internal Server Error
+        "501":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+          description: Not Implemented
+      summary: Add a new MCP server configuration
+      tags:
+      - mcp
+  /api/v1/mcp/servers/{name}:
+    delete:
+      operationId: deleteMCPServer
+      parameters:
+      - description: MCP server identifier.
+        in: path
+        name: name
+        required: true
+        schema:
+          description: MCP server identifier.
+          type: string
+      - description: Target harness (e.g. opencode, agy, claude).
+        in: query
+        name: harness
+        schema:
+          description: Target harness (e.g. opencode, agy, claude).
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                additionalProperties:
+                  type: boolean
+                type: object
+          description: OK
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+          description: Bad Request
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+          description: Internal Server Error
+        "501":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+          description: Not Implemented
+      summary: Delete a configured MCP server
+      tags:
+      - mcp
   /api/v1/mobile/browser-control:
     post:
       operationId: setMobileBrowserRemoteAccess
@@ -12524,6 +12639,31 @@ components:
       required:
       - activeBranchId
       type: object
+    AddMCPServerRequest:
+      properties:
+        args:
+          items:
+            type: string
+          type: array
+        command:
+          type: string
+        env:
+          additionalProperties:
+            type: string
+          type: object
+        harness:
+          type: string
+        name:
+          type: string
+        type:
+          type: string
+        url:
+          type: string
+      required:
+      - name
+      - harness
+      - type
+      type: object
     AddProjectInput:
       properties:
         asWorkspace:
@@ -17256,6 +17396,45 @@ components:
       - path
       - entries
       - truncated
+      type: object
+    MCPServerResponse:
+      properties:
+        args:
+          items:
+            type: string
+          type: array
+        command:
+          type: string
+        configPath:
+          type: string
+        enabled:
+          type: boolean
+        env:
+          additionalProperties:
+            type: string
+          type: object
+        harness:
+          type: string
+        name:
+          type: string
+        type:
+          type: string
+        url:
+          type: string
+      required:
+      - name
+      - harness
+      - type
+      - enabled
+      type: object
+    MCPServersListResponse:
+      properties:
+        servers:
+          items:
+            $ref: '#/components/schemas/MCPServerResponse'
+          type: array
+      required:
+      - servers
       type: object
     MarkAllNotificationsReadRequest:
       properties:

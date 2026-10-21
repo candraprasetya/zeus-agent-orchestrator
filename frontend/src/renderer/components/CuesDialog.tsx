@@ -216,7 +216,7 @@ function ProjectCuesSettings({ projectId, onBusyChange, createOnly = false, onCr
 			showGlobalToast(
 				t("cues.presetsAdded", { count: createdCount, platform: platformName }),
 				undefined,
-				"success",
+				"info",
 			);
 		} catch (error) {
 			if (!mounted.current) return;

@@ -1,0 +1,523 @@
+package mcp
+
+import (
+	"context"
+	"encoding/json"
+	"errors"
+	"fmt"
+	"os"
+	"path/filepath"
+	"strings"
+	"sync"
+)
+
+type Manager struct {
+	homeDir string
+	mu      sync.RWMutex
+}
+
+// New creates a new MCP Manager. If homeDir is empty, os.UserHomeDir() is used.
+func New(homeDir string) *Manager {
+	if homeDir == "" {
+		homeDir, _ = os.UserHomeDir()
+	}
+	return &Manager{homeDir: homeDir}
+}
+
+func (m *Manager) opencodeConfigPath() string {
+	primary := filepath.Join(m.homeDir, ".config", "opencode", "opencode.json")
+	if _, err := os.Stat(primary); err == nil {
+		return primary
+	}
+	legacy := filepath.Join(m.homeDir, ".opencode", "opencode.json")
+	if _, err := os.Stat(legacy); err == nil {
+		return legacy
+	}
+	return primary
+}
+
+func (m *Manager) mageConfigPath() string {
+	primary := filepath.Join(m.homeDir, ".mage", "mage.json")
+	if _, err := os.Stat(primary); err == nil {
+		return primary
+	}
+	legacy := filepath.Join(m.homeDir, ".config", "mage", "mage.json")
+	if _, err := os.Stat(legacy); err == nil {
+		return legacy
+	}
+	return primary
+}
+
+func (m *Manager) agyConfigPath() string {
+	return filepath.Join(m.homeDir, ".gemini", "config", "mcp_config.json")
+}
+
+func (m *Manager) claudeConfigPath() string {
+	return filepath.Join(m.homeDir, ".claude.json")
+}
+
+func (m *Manager) List(ctx context.Context, harness string) ([]ServerConfig, error) {
+	m.mu.RLock()
+	defer m.mu.RUnlock()
+
+	target := strings.ToLower(strings.TrimSpace(harness))
+	var results []ServerConfig
+
+	if target == "" || target == "all" || target == "opencode" {
+		items, err := m.listOpencodeCompatible(m.opencodeConfigPath(), "opencode")
+		if err == nil {
+			results = append(results, items...)
+		} else if !errors.Is(err, os.ErrNotExist) && target == "opencode" {
+			return nil, err
+		}
+	}
+
+	if target == "all" || target == "mage" {
+		items, err := m.listOpencodeCompatible(m.mageConfigPath(), "mage")
+		if err == nil {
+			results = append(results, items...)
+		} else if !errors.Is(err, os.ErrNotExist) && target == "mage" {
+			return nil, err
+		}
+	}
+
+	if target == "all" || target == "agy" {
+		items, err := m.listAgy()
+		if err == nil {
+			results = append(results, items...)
+		} else if !errors.Is(err, os.ErrNotExist) && target == "agy" {
+			return nil, err
+		}
+	}
+
+	if target == "all" || target == "claude" {
+		items, err := m.listClaude()
+		if err == nil {
+			results = append(results, items...)
+		} else if !errors.Is(err, os.ErrNotExist) && target == "claude" {
+			return nil, err
+		}
+	}
+
+	return results, nil
+}
+
+func (m *Manager) listOpencodeCompatible(cfgPath, harnessName string) ([]ServerConfig, error) {
+	data, err := os.ReadFile(cfgPath)
+	if err != nil {
+		return nil, err
+	}
+
+	var root map[string]any
+	if err := json.Unmarshal(data, &root); err != nil {
+		return nil, err
+	}
+
+	mcpVal, ok := root["mcp"].(map[string]any)
+	if !ok {
+		return nil, nil
+	}
+
+	var out []ServerConfig
+	for name, item := range mcpVal {
+		serverMap, ok := item.(map[string]any)
+		if !ok {
+			continue
+		}
+
+		srvType, _ := serverMap["type"].(string)
+		if srvType == "" {
+			srvType = "local"
+		}
+
+		enabled := true
+		if val, exists := serverMap["enabled"]; exists {
+			if b, isBool := val.(bool); isBool {
+				enabled = b
+			}
+		}
+
+		cfg := ServerConfig{
+			Name:       name,
+			Harness:    harnessName,
+			Type:       srvType,
+			ConfigPath: cfgPath,
+			Enabled:    enabled,
+		}
+
+		if srvType == "remote" {
+			cfg.URL, _ = serverMap["url"].(string)
+		} else {
+			if cmdArr, ok := serverMap["command"].([]any); ok && len(cmdArr) > 0 {
+				cfg.Command = fmt.Sprint(cmdArr[0])
+				for _, a := range cmdArr[1:] {
+					cfg.Args = append(cfg.Args, fmt.Sprint(a))
+				}
+			} else if cmdStr, ok := serverMap["command"].(string); ok {
+				cfg.Command = cmdStr
+			}
+
+			if envMap, ok := serverMap["environment"].(map[string]any); ok {
+				cfg.Env = make(map[string]string, len(envMap))
+				for k, v := range envMap {
+					cfg.Env[k] = fmt.Sprint(v)
+				}
+			}
+		}
+
+		out = append(out, cfg)
+	}
+	return out, nil
+}
+
+func (m *Manager) listAgy() ([]ServerConfig, error) {
+	cfgPath := m.agyConfigPath()
+	data, err := os.ReadFile(cfgPath)
+	if err != nil {
+		return nil, err
+	}
+
+	var root map[string]any
+	if err := json.Unmarshal(data, &root); err != nil {
+		return nil, err
+	}
+
+	mcpServers, ok := root["mcpServers"].(map[string]any)
+	if !ok {
+		return nil, nil
+	}
+
+	var out []ServerConfig
+	for name, item := range mcpServers {
+		serverMap, ok := item.(map[string]any)
+		if !ok {
+			continue
+		}
+
+		url, _ := serverMap["url"].(string)
+		srvType := "local"
+		if url != "" {
+			srvType = "remote"
+		}
+
+		cfg := ServerConfig{
+			Name:       name,
+			Harness:    "agy",
+			Type:       srvType,
+			URL:        url,
+			ConfigPath: cfgPath,
+			Enabled:    true,
+		}
+
+		if srvType == "local" {
+			cfg.Command, _ = serverMap["command"].(string)
+			if args, ok := serverMap["args"].([]any); ok {
+				for _, a := range args {
+					cfg.Args = append(cfg.Args, fmt.Sprint(a))
+				}
+			}
+			if envMap, ok := serverMap["env"].(map[string]any); ok {
+				cfg.Env = make(map[string]string, len(envMap))
+				for k, v := range envMap {
+					cfg.Env[k] = fmt.Sprint(v)
+				}
+			}
+		}
+
+		out = append(out, cfg)
+	}
+	return out, nil
+}
+
+func (m *Manager) listClaude() ([]ServerConfig, error) {
+	cfgPath := m.claudeConfigPath()
+	data, err := os.ReadFile(cfgPath)
+	if err != nil {
+		return nil, err
+	}
+
+	var root map[string]any
+	if err := json.Unmarshal(data, &root); err != nil {
+		return nil, err
+	}
+
+	mcpServers, ok := root["mcpServers"].(map[string]any)
+	if !ok {
+		return nil, nil
+	}
+
+	var out []ServerConfig
+	for name, item := range mcpServers {
+		serverMap, ok := item.(map[string]any)
+		if !ok {
+			continue
+		}
+
+		cfg := ServerConfig{
+			Name:       name,
+			Harness:    "claude",
+			Type:       "local",
+			ConfigPath: cfgPath,
+			Enabled:    true,
+		}
+		cfg.Command, _ = serverMap["command"].(string)
+		if args, ok := serverMap["args"].([]any); ok {
+			for _, a := range args {
+				cfg.Args = append(cfg.Args, fmt.Sprint(a))
+			}
+		}
+		if envMap, ok := serverMap["env"].(map[string]any); ok {
+			cfg.Env = make(map[string]string, len(envMap))
+			for k, v := range envMap {
+				cfg.Env[k] = fmt.Sprint(v)
+			}
+		}
+
+		out = append(out, cfg)
+	}
+	return out, nil
+}
+
+func (m *Manager) Add(ctx context.Context, req AddServerRequest) (ServerConfig, error) {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+
+	name := strings.TrimSpace(req.Name)
+	if name == "" {
+		return ServerConfig{}, errors.New("server name is required")
+	}
+
+	harness := strings.ToLower(strings.TrimSpace(req.Harness))
+	if harness == "" {
+		harness = "opencode"
+	}
+
+	srvType := strings.ToLower(strings.TrimSpace(req.Type))
+	if srvType == "" || srvType == "stdio" {
+		srvType = "local"
+	} else if srvType == "http" || srvType == "sse" {
+		srvType = "remote"
+	}
+
+	switch harness {
+	case "opencode":
+		return m.addOpencodeCompatible(m.opencodeConfigPath(), "opencode", name, srvType, req)
+	case "mage":
+		return m.addOpencodeCompatible(m.mageConfigPath(), "mage", name, srvType, req)
+	case "agy":
+		return m.addAgy(name, srvType, req)
+	case "claude":
+		return m.addClaude(name, srvType, req)
+	default:
+		return ServerConfig{}, fmt.Errorf("unsupported harness: %s", harness)
+	}
+}
+
+func (m *Manager) addOpencodeCompatible(cfgPath, harnessName, name, srvType string, req AddServerRequest) (ServerConfig, error) {
+	var root map[string]any
+
+	data, err := os.ReadFile(cfgPath)
+	if err == nil {
+		_ = json.Unmarshal(data, &root)
+	}
+	if root == nil {
+		root = make(map[string]any)
+	}
+
+	mcpVal, ok := root["mcp"].(map[string]any)
+	if !ok {
+		mcpVal = make(map[string]any)
+		root["mcp"] = mcpVal
+	}
+
+	serverEntry := map[string]any{
+		"type":    srvType,
+		"enabled": true,
+	}
+
+	if srvType == "remote" {
+		serverEntry["url"] = req.URL
+	} else {
+		cmdList := []string{req.Command}
+		cmdList = append(cmdList, req.Args...)
+		serverEntry["command"] = cmdList
+		if len(req.Env) > 0 {
+			serverEntry["environment"] = req.Env
+		} else {
+			serverEntry["environment"] = map[string]string{}
+		}
+	}
+
+	mcpVal[name] = serverEntry
+
+	if err := writeJSONPretty(cfgPath, root); err != nil {
+		return ServerConfig{}, err
+	}
+
+	return ServerConfig{
+		Name:       name,
+		Harness:    harnessName,
+		Type:       srvType,
+		Command:    req.Command,
+		Args:       req.Args,
+		URL:        req.URL,
+		Env:        req.Env,
+		ConfigPath: cfgPath,
+		Enabled:    true,
+	}, nil
+}
+
+func (m *Manager) addAgy(name, srvType string, req AddServerRequest) (ServerConfig, error) {
+	cfgPath := m.agyConfigPath()
+	var root map[string]any
+
+	data, err := os.ReadFile(cfgPath)
+	if err == nil {
+		_ = json.Unmarshal(data, &root)
+	}
+	if root == nil {
+		root = make(map[string]any)
+	}
+
+	mcpVal, ok := root["mcpServers"].(map[string]any)
+	if !ok {
+		mcpVal = make(map[string]any)
+		root["mcpServers"] = mcpVal
+	}
+
+	serverEntry := make(map[string]any)
+	if srvType == "remote" {
+		serverEntry["url"] = req.URL
+	} else {
+		serverEntry["command"] = req.Command
+		serverEntry["args"] = req.Args
+		if len(req.Env) > 0 {
+			serverEntry["env"] = req.Env
+		} else {
+			serverEntry["env"] = map[string]string{}
+		}
+	}
+
+	mcpVal[name] = serverEntry
+
+	if err := writeJSONPretty(cfgPath, root); err != nil {
+		return ServerConfig{}, err
+	}
+
+	return ServerConfig{
+		Name:       name,
+		Harness:    "agy",
+		Type:       srvType,
+		Command:    req.Command,
+		Args:       req.Args,
+		URL:        req.URL,
+		Env:        req.Env,
+		ConfigPath: cfgPath,
+		Enabled:    true,
+	}, nil
+}
+
+func (m *Manager) addClaude(name, srvType string, req AddServerRequest) (ServerConfig, error) {
+	cfgPath := m.claudeConfigPath()
+	var root map[string]any
+
+	data, err := os.ReadFile(cfgPath)
+	if err == nil {
+		_ = json.Unmarshal(data, &root)
+	}
+	if root == nil {
+		root = make(map[string]any)
+	}
+
+	mcpVal, ok := root["mcpServers"].(map[string]any)
+	if !ok {
+		mcpVal = make(map[string]any)
+		root["mcpServers"] = mcpVal
+	}
+
+	serverEntry := map[string]any{
+		"command": req.Command,
+		"args":    req.Args,
+		"env":     req.Env,
+	}
+
+	mcpVal[name] = serverEntry
+
+	if err := writeJSONPretty(cfgPath, root); err != nil {
+		return ServerConfig{}, err
+	}
+
+	return ServerConfig{
+		Name:       name,
+		Harness:    "claude",
+		Type:       srvType,
+		Command:    req.Command,
+		Args:       req.Args,
+		Env:        req.Env,
+		ConfigPath: cfgPath,
+		Enabled:    true,
+	}, nil
+}
+
+func (m *Manager) Delete(ctx context.Context, harness, name string) error {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+
+	name = strings.TrimSpace(name)
+	if name == "" {
+		return errors.New("server name is required")
+	}
+
+	harness = strings.ToLower(strings.TrimSpace(harness))
+	if harness == "" {
+		harness = "opencode"
+	}
+
+	switch harness {
+	case "opencode":
+		return deleteFromJSONKey(m.opencodeConfigPath(), "mcp", name)
+	case "mage":
+		return deleteFromJSONKey(m.mageConfigPath(), "mcp", name)
+	case "agy":
+		return deleteFromJSONKey(m.agyConfigPath(), "mcpServers", name)
+	case "claude":
+		return deleteFromJSONKey(m.claudeConfigPath(), "mcpServers", name)
+	default:
+		return fmt.Errorf("unsupported harness: %s", harness)
+	}
+}
+
+func deleteFromJSONKey(cfgPath, rootKey, itemKey string) error {
+	data, err := os.ReadFile(cfgPath)
+	if err != nil {
+		return err
+	}
+
+	var root map[string]any
+	if err := json.Unmarshal(data, &root); err != nil {
+		return err
+	}
+
+	subMap, ok := root[rootKey].(map[string]any)
+	if !ok {
+		return nil
+	}
+
+	delete(subMap, itemKey)
+
+	return writeJSONPretty(cfgPath, root)
+}
+
+func writeJSONPretty(path string, val any) error {
+	if err := os.MkdirAll(filepath.Dir(path), 0755); err != nil {
+		return err
+	}
+
+	bytes, err := json.MarshalIndent(val, "", "  ")
+	if err != nil {
+		return err
+	}
+	bytes = append(bytes, '\n')
+
+	return os.WriteFile(path, bytes, 0644)
+}

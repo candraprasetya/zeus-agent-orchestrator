@@ -30,6 +30,7 @@ export type GlobalSettingsSection =
 	| "agents"
 	| "teams"
 	| "skills"
+	| "mcp"
 	| "billing"
 	| "remoteHosts"
 	| "coder"
