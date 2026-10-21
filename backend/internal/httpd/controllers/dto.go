@@ -2786,6 +2786,46 @@ type ImportSkillsRequest struct {
 	SourcePath string `json:"sourcePath"`
 }
 
+// TeamIDParam is the {teamId} path parameter.
+type TeamIDParam struct {
+	TeamID string `path:"teamId" description:"Squad identifier."`
+}
+
+// TeamRoleResponse describes a specialized role in a squad.
+type TeamRoleResponse struct {
+	Role         string   `json:"role"`
+	Harness      string   `json:"harness,omitempty"`
+	Model        string   `json:"model,omitempty"`
+	Skills       []string `json:"skills"`
+	Instructions string   `json:"instructions,omitempty"`
+}
+
+// TeamResponse describes a squad of specialized roles.
+type TeamResponse struct {
+	ID          string             `json:"id"`
+	Name        string             `json:"name"`
+	Description string             `json:"description,omitempty"`
+	Roles       []TeamRoleResponse `json:"roles"`
+}
+
+// TeamsListResponse contains all configured squads.
+type TeamsListResponse struct {
+	Teams []TeamResponse `json:"teams"`
+}
+
+// TeamPayload is the request body for creating or updating a squad.
+type TeamPayload struct {
+	ID          string             `json:"id"`
+	Name        string             `json:"name"`
+	Description string             `json:"description,omitempty"`
+	Roles       []TeamRoleResponse `json:"roles"`
+}
+
+// TeamPromptResponse returns the generated delegation prompt for an orchestrator.
+type TeamPromptResponse struct {
+	Prompt string `json:"prompt"`
+}
+
 // ConversationTurnSettingsPayload is the provider choices for the next turn. It is
 // both the request body for changing them and the echo of what is now stored.
 //

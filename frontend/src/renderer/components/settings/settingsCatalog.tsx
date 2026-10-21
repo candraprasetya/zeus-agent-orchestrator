@@ -1,4 +1,4 @@
-import { Activity, BadgeCheck, Bot, CircleHelp, Coffee, CreditCard, Globe2, Keyboard, RefreshCw, Server, Settings2, Smartphone, Sparkles, type LucideIcon } from "lucide-react";
+import { Activity, BadgeCheck, Bot, CircleHelp, Coffee, CreditCard, Globe2, Keyboard, RefreshCw, Server, Settings2, Smartphone, Sparkles, Users, type LucideIcon } from "lucide-react";
 import { lazy, type ReactNode } from "react";
 import type { TFunction } from "i18next";
 import type { GlobalSettingsSection, HarnessDiagnosticsRequest } from "../../stores/ui-store";
@@ -17,6 +17,7 @@ import { RemoteHostsSettings } from "./RemoteHostsSettings";
 import { SettingsSection } from "./SettingsSection";
 import { SkillsSection } from "./SkillsSection";
 import { StayAwakeSection } from "./StayAwakeSection";
+import { TeamsSection } from "./TeamsSection";
 
 /** The memory window's own blocks, loaded only when the page is opened: it
  * samples the machine every two seconds while it is on screen. */
@@ -82,6 +83,12 @@ const globalSettingsCatalog: SettingsCatalogItem[] = [
 		// Account tab instead.
 		visible: ({ developerMode }) => !developerMode,
 		render: (_t, titleHidden) => <CodexAccountsSection titleHidden={titleHidden} />,
+	},
+	{
+		id: "teams",
+		icon: Users,
+		label: (t) => t("settings.teams.title", "Squads & Teams"),
+		render: (_t, titleHidden) => <TeamsSection titleHidden={titleHidden} />,
 	},
 	{
 		id: "skills",

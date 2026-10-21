@@ -78,6 +78,8 @@ type APIDeps struct {
 	AgentSwitchPolicy AgentSwitchPolicyControl
 	// Skills is the skills management service.
 	Skills controllers.SkillsService
+	// Teams is the squads and roles management service.
+	Teams controllers.TeamsService
 	// LinkPreview unfurls external URLs for the renderer's hover cards; nil
 	// leaves the route answering 501.
 	LinkPreview controllers.LinkPreviewService
@@ -150,6 +152,7 @@ type API struct {
 	systemInstall *controllers.SystemInstallController
 	agentAuth     *controllers.AgentAuthController
 	skills        *controllers.SkillsController
+	teams         *controllers.TeamsController
 	linkPreview   *controllers.LinkPreviewController
 	github        *controllers.GitHubController
 	events        *EventsController
@@ -213,6 +216,7 @@ func newAPIWithLogger(cfg config.Config, deps APIDeps, log *slog.Logger) *API {
 		systemInstall: &controllers.SystemInstallController{Installer: deps.Installer},
 		agentAuth:     &controllers.AgentAuthController{Svc: deps.AgentAuth},
 		skills:        &controllers.SkillsController{Svc: deps.Skills},
+		teams:         &controllers.TeamsController{Svc: deps.Teams},
 		linkPreview:   &controllers.LinkPreviewController{Svc: deps.LinkPreview},
 		github:        &controllers.GitHubController{Svc: deps.GitHub},
 		events:        &EventsController{Source: deps.CDC, Live: deps.Events},
@@ -283,6 +287,7 @@ func (a *API) Register(root chi.Router) {
 			a.systemInstall.Register(r)
 			a.agentAuth.Register(r)
 			a.skills.Register(r)
+			a.teams.Register(r)
 			a.linkPreview.Register(r)
 			a.github.Register(r)
 			// Sibling REST controllers plug in here.

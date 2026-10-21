@@ -11909,6 +11909,228 @@ paths:
       summary: Cancel an unclaimed speculative task worktree
       tags:
       - projects
+  /api/v1/teams:
+    get:
+      operationId: listTeams
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TeamsListResponse'
+          description: OK
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+          description: Internal Server Error
+        "501":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+          description: Not Implemented
+      summary: List all configured squads and roles
+      tags:
+      - teams
+    post:
+      operationId: createTeam
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TeamPayload'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TeamResponse'
+          description: OK
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+          description: Bad Request
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+          description: Internal Server Error
+        "501":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+          description: Not Implemented
+      summary: Create or update a squad
+      tags:
+      - teams
+  /api/v1/teams/{teamId}:
+    delete:
+      operationId: deleteTeam
+      parameters:
+      - description: Squad identifier.
+        in: path
+        name: teamId
+        required: true
+        schema:
+          description: Squad identifier.
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                additionalProperties: {}
+                type: object
+          description: OK
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+          description: Not Found
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+          description: Internal Server Error
+        "501":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+          description: Not Implemented
+      summary: Delete a squad
+      tags:
+      - teams
+    get:
+      operationId: getTeam
+      parameters:
+      - description: Squad identifier.
+        in: path
+        name: teamId
+        required: true
+        schema:
+          description: Squad identifier.
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TeamResponse'
+          description: OK
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+          description: Not Found
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+          description: Internal Server Error
+        "501":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+          description: Not Implemented
+      summary: Get a squad by ID
+      tags:
+      - teams
+    put:
+      operationId: updateTeam
+      parameters:
+      - description: Squad identifier.
+        in: path
+        name: teamId
+        required: true
+        schema:
+          description: Squad identifier.
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TeamPayload'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TeamResponse'
+          description: OK
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+          description: Bad Request
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+          description: Internal Server Error
+        "501":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+          description: Not Implemented
+      summary: Update a squad
+      tags:
+      - teams
+  /api/v1/teams/{teamId}/prompt:
+    get:
+      operationId: getTeamPrompt
+      parameters:
+      - description: Squad identifier.
+        in: path
+        name: teamId
+        required: true
+        schema:
+          description: Squad identifier.
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TeamPromptResponse'
+          description: OK
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+          description: Not Found
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+          description: Internal Server Error
+        "501":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APIError'
+          description: Not Implemented
+      summary: Get the orchestrator delegation instructions prompt for a squad
+      tags:
+      - teams
   /api/v1/usage/memory/pressure:
     get:
       operationId: getMemoryPressure
@@ -20002,6 +20224,74 @@ components:
       required:
       - ready
       - requirements
+      type: object
+    TeamPayload:
+      properties:
+        description:
+          type: string
+        id:
+          type: string
+        name:
+          type: string
+        roles:
+          items:
+            $ref: '#/components/schemas/TeamRoleResponse'
+          type: array
+      required:
+      - id
+      - name
+      - roles
+      type: object
+    TeamPromptResponse:
+      properties:
+        prompt:
+          type: string
+      required:
+      - prompt
+      type: object
+    TeamResponse:
+      properties:
+        description:
+          type: string
+        id:
+          type: string
+        name:
+          type: string
+        roles:
+          items:
+            $ref: '#/components/schemas/TeamRoleResponse'
+          type: array
+      required:
+      - id
+      - name
+      - roles
+      type: object
+    TeamRoleResponse:
+      properties:
+        harness:
+          type: string
+        instructions:
+          type: string
+        model:
+          type: string
+        role:
+          type: string
+        skills:
+          items:
+            type: string
+          type: array
+      required:
+      - role
+      - skills
+      type: object
+    TeamsListResponse:
+      properties:
+        teams:
+          items:
+            $ref: '#/components/schemas/TeamResponse'
+          type: array
+      required:
+      - teams
       type: object
     TrackerIntakeConfig:
       properties:
