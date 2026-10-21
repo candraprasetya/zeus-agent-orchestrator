@@ -8,7 +8,6 @@ import { useSoundNotificationsStore } from "../../stores/sound-notifications-sto
 import { useUiStore } from "../../stores/ui-store";
 import { useTelemetryPolicyStore } from "../../stores/telemetry-policy-store";
 import { useAnalyticsOptOutStore } from "../../stores/analytics-opt-out-store";
-import { ConfirmDialog } from "../ConfirmDialog";
 import { CliLinkSettings } from "./CliLinkSettingsRow";
 import { useTerminalShellStore } from "../../stores/terminal-shell-store";
 import { DefaultCloudSandboxSection } from "./DefaultCloudSandboxRow";

@@ -248,8 +248,9 @@ export const SessionChatSurface = memo(function SessionChatSurface({
 		staleTime: 30_000,
 	});
 
-	const autoRetryConfig = projectQuery.data?.config?.autoRetry ?? false;
-	const maxRetriesConfig = projectQuery.data?.config?.maxRetries ?? 3;
+	const project = projectQuery.data && "config" in projectQuery.data ? projectQuery.data : null;
+	const autoRetryConfig = project?.config?.autoRetry ?? false;
+	const maxRetriesConfig = project?.config?.maxRetries ?? 3;
 	const autoRetryAttemptedRef = useRef<Set<string>>(new Set());
 
 	useEffect(() => {

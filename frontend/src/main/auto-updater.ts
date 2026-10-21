@@ -12,7 +12,6 @@ import os from "node:os";
 import path from "node:path";
 import semver from "semver";
 import { AO_BUNDLE_ID } from "./stale-app-copies";
-import type { RequestOptions } from "node:http";
 import {
   readUpdateSettings,
   macDifferentialUpdatesEnabled,
@@ -1141,15 +1140,6 @@ function supersedesStagedBuild(version: string | undefined): boolean {
 }
 
 type UpdateCheckOutcome = Awaited<ReturnType<typeof autoUpdater.checkForUpdates>>;
-
-const UPDATE_CHECK_TIMEOUT_MS = 60_000;
-const UPDATE_CHECK_TIMEOUT_MESSAGE = "Update check timed out. The update service did not respond in time. Try again.";
-
-// electron-updater owns this executor but omits it from its public declarations.
-// Limit the adapter to metadata requests; downloads retain their own cancellation.
-type UpdateMetadataExecutor = {
-  request(options: RequestOptions, token?: CancellationToken, data?: Record<string, unknown> | null): Promise<string | null>;
-};
 
 async function checkForUpdatesWithDeadline(): Promise<UpdateCheckOutcome> {
   return null;

@@ -28,20 +28,20 @@ const router = createAppRouter(queryClient);
 
 // Main owns consent and only acknowledges opt-out after every live AO shell
 // confirms that its in-memory renderer queues were actually purged.
-aoBridge.telemetry.onClearQueues(clearRendererTelemetryQueues);
+aoBridge.telemetry?.onClearQueues?.(clearRendererTelemetryQueues);
 // Main decides *when* a notification sound plays; the renderer only supplies
 // the speakers, since main has no audio output of its own.
-aoBridge.notifications.onPlaySound(() => {
-	playNotificationSound(() => aoBridge.notifications.reportSoundFailure());
+aoBridge.notifications?.onPlaySound?.(() => {
+	playNotificationSound(() => aoBridge.notifications?.reportSoundFailure?.());
 });
-aoBridge.telemetry.onPolicy((view) => applyRendererTelemetryPolicy(view.eventsEnabled && view.acknowledged && view.state === "applied"));
+aoBridge.telemetry?.onPolicy?.((view) => applyRendererTelemetryPolicy(view.eventsEnabled && view.acknowledged && view.state === "applied"));
 
 // The analytics opt-out lives in main (shared with the daemon and mobile). Apply
 // it to this renderer's PostHog client at launch and whenever Settings flips it.
-void aoBridge.telemetry.getAnalyticsOptOut().then((optedOut) => {
+void aoBridge.telemetry?.getAnalyticsOptOut?.()?.then((optedOut) => {
 	if (optedOut) void applyAnalyticsOptOut(true);
-}).catch(() => undefined);
-aoBridge.telemetry.onAnalyticsOptOut((optedOut) => {
+})?.catch(() => undefined);
+aoBridge.telemetry?.onAnalyticsOptOut?.((optedOut) => {
 	useAnalyticsOptOutStore.setState({ optedOut, loaded: true });
 	void applyAnalyticsOptOut(optedOut);
 });

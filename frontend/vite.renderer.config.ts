@@ -8,7 +8,6 @@ import { fileURLToPath, URL } from "node:url";
 import { TanStackRouterVite } from "@tanstack/router-plugin/vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
-import { DEFAULT_POSTHOG_HOST } from "./src/shared/posthog-config";
 
 const POSTHOG_ORIGINS: string[] = [];
 
