@@ -1,5 +1,5 @@
 import { useIsMutating, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Globe2, Loader2, PanelRight, Plus } from "lucide-react";
+import { Globe2, Loader2, PanelRight, Plus } from "@/icons/hugeicons-adapter";
 import { useBlocker } from "@tanstack/react-router";
 import { motion } from "motion/react";
 import {

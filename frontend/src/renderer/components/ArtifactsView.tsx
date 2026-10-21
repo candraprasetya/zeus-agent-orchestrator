@@ -1,4 +1,4 @@
-import { ChevronDown, File, FileText, Folder, Globe, Loader2, Plus, Search } from "lucide-react";
+import { ChevronDown, File, FileText, Folder, Globe, Loader2, Plus, Search } from "@/icons/hugeicons-adapter";
 import { ScrollArea } from "radix-ui";
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";

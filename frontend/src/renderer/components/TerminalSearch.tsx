@@ -1,5 +1,5 @@
 import type { SearchAddon } from "@xterm/addon-search";
-import { CaseSensitive, ChevronDown, ChevronUp, Regex, X } from "lucide-react";
+import { CaseSensitive, ChevronDown, ChevronUp, Regex, X } from "@/icons/hugeicons-adapter";
 import { useCallback, useEffect, useRef, useState, type MouseEvent as ReactMouseEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { cn } from "../lib/utils";

@@ -7,7 +7,7 @@
  */
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Check, Copy } from "lucide-react";
+import { Check, Copy } from "@/icons/hugeicons-adapter";
 import { aoBridge } from "../../lib/bridge";
 import { cn } from "../../lib/utils";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
@@ -55,8 +55,8 @@ export function CopyButton({
 			aria-label={copied ? "Copied" : label}
 			className={cn(
 				compact
-					? "flex size-7 items-center justify-center rounded-md text-muted-foreground transition-[background-color,color,transform] hover:bg-interactive-hover hover:text-foreground"
-					: "flex h-7 items-center gap-1 rounded-md px-2 text-xs text-muted-foreground transition-[background-color,color,transform] hover:bg-interactive-hover hover:text-foreground",
+					? "flex size-7 items-center justify-center rounded-full text-muted-foreground transition-[background-color,color,transform] hover:bg-interactive-hover hover:text-foreground"
+					: "flex h-7 items-center gap-1 rounded-full px-2 text-xs text-muted-foreground transition-[background-color,color,transform] hover:bg-interactive-hover hover:text-foreground",
 				className,
 			)}
 		>

@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { AlertTriangle, Loader2 } from "lucide-react";
+import { AlertTriangle, Loader2 } from "@/icons/hugeicons-adapter";
 import { useTranslation } from "react-i18next";
 import { useReviewerConversation, useReviewerConversationCommands, useReviewerConversationModels } from "../../hooks/useReviewerConversation";
 import { useHostConnection } from "../../hooks/useHostConnection";

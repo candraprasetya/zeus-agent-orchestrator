@@ -1,4 +1,4 @@
-import { Pencil, type LucideIcon } from "lucide-react";
+import { Pencil, type LucideIcon } from "@/icons/hugeicons-adapter";
 import { useEffect, useRef, useState, type ComponentPropsWithoutRef, type KeyboardEvent, type ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import { cn } from "../../lib/utils";

@@ -1,7 +1,7 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { useLocation, useNavigate, useParams } from "@tanstack/react-router";
-import { Archive, CalendarClock, File, Folder, LayoutDashboard, Plus } from "lucide-react";
+import { Archive, CalendarClock, File, Folder, LayoutDashboard, Plus } from "@/icons/hugeicons-adapter";
 import { useState, type ReactNode } from "react";
 import { NotificationCenter } from "./NotificationCenter";
 import { ProjectBoardActions } from "./ProjectBoardActions";

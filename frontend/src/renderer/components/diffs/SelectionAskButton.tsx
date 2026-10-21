@@ -1,7 +1,7 @@
 import { useLayoutEffect, useRef, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
 import { useTranslation } from "react-i18next";
-import { MessageSquarePlus } from "lucide-react";
+import { MessageSquarePlus } from "@/icons/hugeicons-adapter";
 import { isMacPlatform } from "../../lib/platform";
 import { Button } from "../ui/button";
 import type { CodeSelectionSource } from "./useCodeSelection";
@@ -42,7 +42,7 @@ export function SelectionAskButton({ onAsk, source }: { onAsk: () => void; sourc
 			}}
 		>
 			<Button
-				className="h-6 gap-1.5 rounded-md px-2 text-xs text-muted-foreground hover:bg-interactive-hover hover:text-foreground [&_svg]:size-3.5"
+				className="h-6 gap-1.5 rounded-full px-2 text-xs text-muted-foreground hover:bg-interactive-hover hover:text-foreground [&_svg]:size-3.5"
 				onClick={onAsk}
 				size={null}
 				title={`${label} (${isMacPlatform() ? "⌘L" : "Ctrl+L"})`}

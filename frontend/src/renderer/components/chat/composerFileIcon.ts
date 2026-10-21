@@ -1,4 +1,4 @@
-import { Code2, File, FileJson2, FileText, Image, Video, type LucideIcon } from "lucide-react";
+import { Code2, File, FileJson2, FileText, Image, Video, type LucideIcon } from "@/icons/hugeicons-adapter";
 
 const CODE_EXTENSIONS = new Set([
 	"c",

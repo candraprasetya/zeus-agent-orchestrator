@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { History, LoaderCircle, User } from "lucide-react";
+import { History, LoaderCircle, User } from "@/icons/hugeicons-adapter";
 import { useArtifactVersion, useArtifactVersions, useSyncArtifactVersions, type ArtifactVersionSummary } from "../hooks/useArtifactVersions";
 import { GithubAvatar } from "@aoagents/product-ui";
 import { useQuery } from "@tanstack/react-query";

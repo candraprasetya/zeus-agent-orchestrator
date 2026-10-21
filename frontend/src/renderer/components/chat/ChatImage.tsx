@@ -15,7 +15,7 @@
 import { createContext, useContext, useState, type ReactNode } from "react";
 import type { ExtraProps } from "react-markdown";
 import { useTranslation } from "react-i18next";
-import { Copy, Download } from "lucide-react";
+import { Copy, Download } from "@/icons/hugeicons-adapter";
 import { cn } from "../../lib/utils";
 import { useUiStore } from "../../stores/ui-store";
 import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } from "../ui/context-menu";

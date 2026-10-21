@@ -13,7 +13,7 @@ import {
 	GitPullRequestDraft,
 	Loader2,
 	Pencil,
-} from "lucide-react";
+} from "@/icons/hugeicons-adapter";
 import { sessionWorkspaceFilesQueryOptions, type WorkspaceFileSummary } from "../hooks/useSessionWorkspaceFiles";
 import { apiErrorMessage } from "../lib/api-client";
 import { clientForSessionHost } from "../lib/host-clients";

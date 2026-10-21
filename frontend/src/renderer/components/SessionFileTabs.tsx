@@ -1,4 +1,4 @@
-import { X } from "lucide-react";
+import { X } from "@/icons/hugeicons-adapter";
 import { useTranslation } from "react-i18next";
 import type { SessionFileTabState } from "../lib/session-file-tabs";
 import { cn } from "../lib/utils";

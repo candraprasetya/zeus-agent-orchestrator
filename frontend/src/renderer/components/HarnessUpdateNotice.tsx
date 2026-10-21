@@ -1,5 +1,5 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { ArrowRight, LoaderCircle, X } from "lucide-react";
+import { ArrowRight, LoaderCircle, X } from "@/icons/hugeicons-adapter";
 import { type CSSProperties, type ReactNode, useEffect, useId, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useTranslation } from "react-i18next";
@@ -241,7 +241,7 @@ export function HarnessUpdateNotice({ enabled }: { enabled: boolean }) {
 		{/* The stack toggle sits above the cards so it never reads as part of one notice. */}
 		{/* Above the stack, whose negative margin reaches up into this row. */}
 		{isExpanded ? <div className="relative z-20 mb-4 flex items-center justify-between gap-2">
-			<Button type="button" variant="ghost" size="sm" className="h-6 rounded-md border border-border bg-card px-2 text-caption text-settings-muted hover:bg-muted" aria-expanded aria-controls={stackId} onClick={() => setExpanded(false)}>{t("settings.harness.hideUpdateStack")}</Button>
+			<Button type="button" variant="ghost" size="sm" className="h-6 rounded-full border border-border bg-card px-2 text-caption text-settings-muted hover:bg-muted" aria-expanded aria-controls={stackId} onClick={() => setExpanded(false)}>{t("settings.harness.hideUpdateStack")}</Button>
 			{updateAllButton("h-6 px-2")}
 		</div> : null}
 		{/* flow-root keeps the stack's negative margin inside this box, so the cards behind peek out below only. */}

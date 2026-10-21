@@ -1,4 +1,4 @@
-import { Check, LogIn, X } from "lucide-react";
+import { Check, LogIn, X } from "@/icons/hugeicons-adapter";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import type { components } from "../../../../api/schema";
@@ -93,7 +93,7 @@ export function HarnessAuthTerminalPanel({ workflow, hostId, onClose, onRetry, o
 				<div className="min-w-0"><p className="truncate text-xs font-medium text-settings-label">{workflow.terminal.title}</p>{status ? <p className="truncate text-caption text-settings-muted" aria-live="polite" role="status">{status}</p> : null}</div>
 				<div className="flex shrink-0 items-center gap-2">
 					{workflow.terminalInput && workflow.phase === "running" ? <Button type="button" size="sm" variant="outline" disabled={terminalState !== "attached" || commandPending || commandSent} onClick={openAuthAction}>{commandSent ? <Check aria-hidden="true" /> : <LogIn aria-hidden="true" />}{workflow.action === "setup" ? commandSent ? t("settings.harness.setupOpened") : t("settings.harness.openSetup") : commandSent ? t("settings.harness.loginOpened") : t("settings.harness.openLogin")}</Button> : null}
-					<button type="button" aria-label={t("settings.close")} className="grid size-7 place-items-center rounded text-settings-muted hover:bg-interactive-hover" disabled={workflow.phase === "closing" || workflow.phase === "verifying"} onClick={onClose}><X className="size-4" aria-hidden="true" /></button>
+					<button type="button" aria-label={t("settings.close")} className="grid size-7 place-items-center rounded-full text-settings-muted hover:bg-interactive-hover" disabled={workflow.phase === "closing" || workflow.phase === "verifying"} onClick={onClose}><X className="size-4" aria-hidden="true" /></button>
 				</div>
 			</div>
 			{/* Full-screen setup TUIs need enough rows for their provider pickers. */}

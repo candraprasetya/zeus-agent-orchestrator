@@ -1,4 +1,4 @@
-import { Check, Circle, X } from "lucide-react";
+import { Check, Circle, X } from "@/icons/hugeicons-adapter";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { cn } from "../../lib/utils";

@@ -1,4 +1,4 @@
-import { GitPullRequest, TerminalSquare, X } from "lucide-react";
+import { GitPullRequest, TerminalSquare, X } from "@/icons/hugeicons-adapter";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import type { TerminalSessionState } from "../hooks/useTerminalSession";

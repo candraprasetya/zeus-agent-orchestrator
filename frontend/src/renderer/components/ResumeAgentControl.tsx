@@ -1,6 +1,6 @@
 import { useIsMutating, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
-import { Play } from "lucide-react";
+import { Play } from "@/icons/hugeicons-adapter";
 import { aoBridge } from "../lib/bridge";
 import { apiErrorMessage } from "../lib/api-client";
 import { clientForSessionHost } from "../lib/host-clients";

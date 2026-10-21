@@ -1,5 +1,5 @@
 import { AppLink } from "./AppLink";
-import { Pencil, Plus, TriangleAlert } from "lucide-react";
+import { Pencil, Plus, TriangleAlert } from "@/icons/hugeicons-adapter";
 import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 import { useTranslation } from "react-i18next";
 import type { components } from "../../api/schema";

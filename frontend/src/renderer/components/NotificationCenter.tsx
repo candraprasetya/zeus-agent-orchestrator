@@ -18,7 +18,7 @@ import {
 	MessageSquareDot,
 	RotateCcw,
 	X,
-} from "lucide-react";
+} from "@/icons/hugeicons-adapter";
 import { memo, useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import {
 	useClearAllNotificationsMutation,

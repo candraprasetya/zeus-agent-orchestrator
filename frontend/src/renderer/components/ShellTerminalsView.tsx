@@ -1,4 +1,4 @@
-import { ChevronLeft, ChevronRight, Plus } from "lucide-react";
+import { ChevronLeft, ChevronRight, Plus } from "@/icons/hugeicons-adapter";
 import { isSettingsPageOpen } from "../hooks/useAppShortcut";
 import { useCallback, useEffect } from "react";
 import { Trans, useTranslation } from "react-i18next";

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Loader2, MessageSquare, Play, Plus, TerminalSquare } from "lucide-react";
+import { Loader2, MessageSquare, Play, Plus, TerminalSquare } from "@/icons/hugeicons-adapter";
 import { useQueryClient } from "@tanstack/react-query";
 import { useUiStore } from "../../stores/ui-store";
 import { apiErrorMessage } from "../../lib/api-client";

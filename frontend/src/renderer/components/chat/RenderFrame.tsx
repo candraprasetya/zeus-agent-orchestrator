@@ -1,4 +1,4 @@
-import { Code2, Download, ExternalLink, FilePlus, FileText, Globe2, Loader2, Maximize2, WrapText } from "lucide-react";
+import { Code2, Download, ExternalLink, FilePlus, FileText, Globe2, Loader2, Maximize2, WrapText } from "@/icons/hugeicons-adapter";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import { useTranslation } from "react-i18next";
 import { useOpenArtifactPreview } from "../../hooks/useOpenArtifactPreview";

@@ -1,4 +1,4 @@
-import { Check, ChevronDown, Loader2, RefreshCw, Search } from "lucide-react";
+import { Check, ChevronDown, Loader2, RefreshCw, Search } from "@/icons/hugeicons-adapter";
 import { type ReactNode, useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import type { AgentModelCatalog } from "../../hooks/useAgentModelsQuery";

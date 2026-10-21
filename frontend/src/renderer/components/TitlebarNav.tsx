@@ -1,6 +1,6 @@
 import { motion, useReducedMotion } from "motion/react";
 import { useCanGoBack, useRouter } from "@tanstack/react-router";
-import { ArrowLeft, ArrowRight, PanelLeft } from "lucide-react";
+import { ArrowLeft, ArrowRight, PanelLeft } from "@/icons/hugeicons-adapter";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { SHELL_PANEL_SPRING } from "@/lib/motion-spring";
@@ -215,7 +215,7 @@ function TitlebarButton({
           <button
             aria-label={label}
             aria-disabled={disabled || undefined}
-            className="grid size-control-md place-items-center rounded-md text-passive transition-colors hover:bg-interactive-hover hover:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-55 disabled:hover:bg-transparent disabled:hover:text-passive"
+            className="grid size-control-md place-items-center rounded-full text-passive transition-colors hover:bg-interactive-hover hover:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-55 disabled:hover:bg-transparent disabled:hover:text-passive"
             disabled={disabled}
             onClick={onClick}
             style={noDragStyle}

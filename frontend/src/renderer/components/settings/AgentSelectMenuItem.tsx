@@ -1,4 +1,4 @@
-import { Check } from "lucide-react";
+import { Check } from "@/icons/hugeicons-adapter";
 import type { AgentStatusTone } from "../../lib/agent-select-options";
 import { cn } from "../../lib/utils";
 import { AgentAvatar } from "../AgentAvatar";

@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Bell, Loader2, Smartphone, Trash2 } from "lucide-react";
+import { Bell, Loader2, Smartphone, Trash2 } from "@/icons/hugeicons-adapter";
 import { apiClient, apiErrorCode, apiErrorMessage } from "../../lib/api-client";
 import { usesPreviewWorkspaceData } from "../../lib/preview-mode";
 import { Switch } from "../ui/switch";

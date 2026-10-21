@@ -1,4 +1,4 @@
-import { ChevronDown, Code2, Copy, FolderOpen, SquareTerminal } from "lucide-react";
+import { ChevronDown, Code2, Copy, FolderOpen, SquareTerminal } from "@/icons/hugeicons-adapter";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import type { OpenTarget, OpenTargetId } from "../../shared/editor-handoff";

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Globe } from "lucide-react";
+import { Globe } from "@/icons/hugeicons-adapter";
 import { cn } from "../lib/utils";
 import { openLinkInSystemBrowser } from "../lib/external-link-policy";
 import type { LinkPreview } from "../hooks/useLinkPreview";

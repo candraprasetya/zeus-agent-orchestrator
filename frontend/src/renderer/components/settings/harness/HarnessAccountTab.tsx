@@ -1,4 +1,4 @@
-import { BookOpen, Check, Copy, ExternalLink, LoaderCircle, LogOut } from "lucide-react";
+import { BookOpen, Check, Copy, ExternalLink, LoaderCircle, LogOut } from "@/icons/hugeicons-adapter";
 import { useTranslation } from "react-i18next";
 import { agentAccountProviderFor } from "../../../hooks/useAgentAccounts";
 import { advisoryInUse, isWaitingForIdleJob, versionLabel, type HarnessInUse, type InstallJob } from "../../../hooks/useHarnessUpdates";

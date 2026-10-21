@@ -1,5 +1,5 @@
 import * as Dialog from "@radix-ui/react-dialog";
-import { ChevronLeft, Folder, Link2, LoaderCircle, X } from "lucide-react";
+import { ChevronLeft, Folder, Link2, LoaderCircle, X } from "@/icons/hugeicons-adapter";
 import { AnimatePresence, motion } from "motion/react";
 import { type FormEvent, useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";

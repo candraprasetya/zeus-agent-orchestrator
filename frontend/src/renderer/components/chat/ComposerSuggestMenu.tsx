@@ -13,7 +13,7 @@
  */
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { ArrowDownUp, CornerDownLeft } from "lucide-react";
+import { ArrowDownUp, CornerDownLeft } from "@/icons/hugeicons-adapter";
 import { cn } from "../../lib/utils";
 import { composerFileIcon } from "./composerFileIcon";
 import type { Suggestion, TriggerKind } from "./composerSuggest";

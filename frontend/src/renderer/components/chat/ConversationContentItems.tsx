@@ -1,4 +1,4 @@
-import { FileText, Image as ImageIcon, Tag } from "lucide-react";
+import { FileText, Image as ImageIcon, Tag } from "@/icons/hugeicons-adapter";
 import { cn } from "../../lib/utils";
 import { ChatImage } from "./ChatImage";
 import type { ConversationContentSummary } from "../../types/conversation";

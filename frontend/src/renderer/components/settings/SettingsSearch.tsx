@@ -1,4 +1,4 @@
-import { Search } from "lucide-react";
+import { Search } from "@/icons/hugeicons-adapter";
 import type { ReactNode } from "react";
 import { Input } from "../ui/input";
 

@@ -1,4 +1,4 @@
-import { MoreVertical } from "lucide-react";
+import { MoreVertical } from "@/icons/hugeicons-adapter";
 import { Children, type ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import { TopbarButton } from "./TopbarButton";

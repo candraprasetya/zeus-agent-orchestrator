@@ -1,4 +1,4 @@
-import { Activity, BadgeCheck, Bot, CircleHelp, CreditCard, Globe2, Keyboard, RefreshCw, Server, Settings2, Smartphone, Sparkles, Users, type LucideIcon } from "lucide-react";
+import { Activity, BadgeCheck, Bot, CircleHelp, CreditCard, Globe2, Keyboard, RefreshCw, Server, Settings2, Smartphone, Sparkles, Users, type LucideIcon } from "@/icons/hugeicons-adapter";
 import { lazy, type ReactNode } from "react";
 import type { TFunction } from "i18next";
 import type { GlobalSettingsSection, HarnessDiagnosticsRequest } from "../../stores/ui-store";
@@ -141,12 +141,6 @@ const globalSettingsCatalog: SettingsCatalogItem[] = [
 				<MobileDevicesSection />
 			</>
 		),
-	},
-	{
-		id: "stayAwake",
-		icon: Coffee,
-		label: (t) => t("awake.title", "Stay Awake"),
-		render: (_t, titleHidden) => <StayAwakeSection titleHidden={titleHidden} />,
 	},
 	{
 		id: "shortcuts",

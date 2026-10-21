@@ -1,4 +1,4 @@
-import { MessageSquareQuote, X } from "lucide-react";
+import { MessageSquareQuote, X } from "@/icons/hugeicons-adapter";
 import { useLayoutEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { cn } from "../../lib/utils";

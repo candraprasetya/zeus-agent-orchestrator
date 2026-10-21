@@ -1,4 +1,4 @@
-import { Search } from "lucide-react";
+import { Search } from "@/icons/hugeicons-adapter";
 import { useCallback, useId, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import { cn } from "../../lib/utils";

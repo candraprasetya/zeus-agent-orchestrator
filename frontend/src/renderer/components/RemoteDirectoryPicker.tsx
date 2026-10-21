@@ -1,6 +1,6 @@
 import * as Dialog from "@radix-ui/react-dialog";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowUp, ChevronRight, Folder, FolderGit2, X } from "lucide-react";
+import { ArrowUp, ChevronRight, Folder, FolderGit2, X } from "@/icons/hugeicons-adapter";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { apiErrorMessage } from "../lib/api-client";

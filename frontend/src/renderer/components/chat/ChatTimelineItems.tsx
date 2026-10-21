@@ -45,7 +45,7 @@ import {
 	Undo2,
 	User,
 	X,
-} from "lucide-react";
+} from "@/icons/hugeicons-adapter";
 
 /** Fixed icon column, matching the prototype's row anatomy. */
 const activityIcon: Record<ActivityKind, typeof SquareTerminal> = {
@@ -659,7 +659,7 @@ export function HumanMessage({
 					   apart in CSS because it paints an enclosure only around a sent one. */
 					data-queued={queued ? "" : undefined}
 					className={cn(
-						"cursor-chat-human-message w-fit max-w-[min(78%,560px)] rounded-[10px] px-3 py-2.5 text-sm leading-[1.55]",
+						"cursor-chat-human-message w-fit max-w-[min(78%,560px)] rounded-2xl px-3.5 py-2.5 text-sm leading-[1.55]",
 						animateIn && "chat-human-message-enter",
 						queued
 							? "border border-dashed border-border-strong bg-transparent text-muted-foreground"
@@ -714,7 +714,7 @@ export function HumanMessage({
 										type="button"
 										onClick={onEditStart}
 										aria-label="Edit user message"
-										className="flex size-7 items-center justify-center rounded-md text-muted-foreground transition-[scale,background-color,color] duration-150 ease-out hover:bg-interactive-hover hover:text-foreground active:scale-[0.96] motion-reduce:transition-none motion-reduce:active:scale-100"
+										className="flex size-7 items-center justify-center rounded-full text-muted-foreground transition-[scale,background-color,color] duration-150 ease-out hover:bg-interactive-hover hover:text-foreground active:scale-[0.96] motion-reduce:transition-none motion-reduce:active:scale-100"
 									>
 										<Pencil aria-hidden="true" className="size-3" />
 									</button>
@@ -726,7 +726,7 @@ export function HumanMessage({
 							text={visibleMessageText}
 							label="Copy user message"
 							compact
-							className="size-7 justify-center rounded-md px-0 py-0 transition-[scale,background-color,color] duration-150 ease-out hover:bg-interactive-hover hover:text-foreground active:scale-[0.96] motion-reduce:transition-none motion-reduce:active:scale-100"
+							className="size-7 justify-center rounded-full px-0 py-0 transition-[scale,background-color,color] duration-150 ease-out hover:bg-interactive-hover hover:text-foreground active:scale-[0.96] motion-reduce:transition-none motion-reduce:active:scale-100"
 						/>
 					</div>
 					{branchPoint && onActivateBranch ? (
@@ -918,7 +918,7 @@ export function AssistantMessage({
 								text={message.text}
 								label="Copy message as markdown"
 								compact
-								className="size-7 justify-center rounded-md px-0 py-0 transition-[scale,background-color,color] duration-150 ease-out hover:bg-interactive-hover hover:text-foreground active:scale-[0.96] motion-reduce:transition-none motion-reduce:active:scale-100"
+								className="size-7 justify-center rounded-full px-0 py-0 transition-[scale,background-color,color] duration-150 ease-out hover:bg-interactive-hover hover:text-foreground active:scale-[0.96] motion-reduce:transition-none motion-reduce:active:scale-100"
 							/>
 						</div>
 					) : null}
@@ -930,7 +930,7 @@ export function AssistantMessage({
 									onClick={onRollback}
 									disabled={rollbackDisabled}
 									aria-label="Roll back to here"
-									className="flex size-7 items-center justify-center rounded-md text-muted-foreground transition-[scale,background-color,color] duration-150 ease-out hover:bg-interactive-hover hover:text-foreground active:scale-[0.96] disabled:pointer-events-none disabled:opacity-40 motion-reduce:transition-none motion-reduce:active:scale-100"
+									className="flex size-7 items-center justify-center rounded-full text-muted-foreground transition-[scale,background-color,color] duration-150 ease-out hover:bg-interactive-hover hover:text-foreground active:scale-[0.96] disabled:pointer-events-none disabled:opacity-40 motion-reduce:transition-none motion-reduce:active:scale-100"
 								>
 									<Undo2 aria-hidden="true" className="size-3" />
 								</button>
@@ -2517,7 +2517,7 @@ export function SteerMessage({
 					{automationBody}
 				</AutomationMessageFrame>
 			) : (
-				<div className="break-words whitespace-pre-wrap text-sm leading-[1.55] w-fit max-w-[min(78%,560px)] rounded-[10px] border border-accent-dim bg-raised px-3 py-2.5 text-foreground">
+				<div className="break-words whitespace-pre-wrap text-sm leading-[1.55] w-fit max-w-[min(78%,560px)] rounded-2xl border border-accent-dim bg-raised px-3.5 py-2.5 text-foreground">
 					{body ? (
 						<p>
 							<ProseWithInlineImages

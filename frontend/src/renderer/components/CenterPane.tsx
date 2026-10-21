@@ -4,7 +4,7 @@ import {
 	Pencil,
 	TriangleAlert,
 	X,
-} from "lucide-react";
+} from "@/icons/hugeicons-adapter";
 import { isSettingsPageOpen } from "../hooks/useAppShortcut";
 import { motion, Reorder, useDragControls } from "motion/react";
 import {

@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Check, ChevronDown, ChevronRight, Copy, Loader2, RotateCcw } from "lucide-react";
+import { Check, ChevronDown, ChevronRight, Copy, Loader2, RotateCcw } from "@/icons/hugeicons-adapter";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useCloudCp } from "../hooks/useCloudCp";

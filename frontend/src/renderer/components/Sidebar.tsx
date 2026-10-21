@@ -40,7 +40,7 @@ import {
 	User,
 	X,
 	ArrowLeft,
-} from "lucide-react";
+} from "@/icons/hugeicons-adapter";
 import {
 	useCallback,
 	useEffect,
@@ -164,7 +164,7 @@ const ROW_ACTIONS_CLASS = "absolute inset-y-0 right-1 flex items-center gap-0.5"
 /** Long enough that sweeping the pointer across the list starts no agents. */
 const AGENT_WARM_UP_HOVER_MS = 300;
 const ROW_ACTION_BUTTON_CLASS =
-	"sidebar-icon-action grid size-6 shrink-0 place-items-center rounded-md !bg-transparent text-passive hover:!bg-interactive-hover focus:!bg-transparent focus-visible:!bg-interactive-hover active:!bg-interactive-hover data-[state=open]:!bg-interactive-hover hover:text-foreground focus-visible:text-foreground disabled:pointer-events-none disabled:opacity-50 data-[state=open]:text-foreground [&_svg]:size-icon-md";
+	"sidebar-icon-action grid size-6 shrink-0 place-items-center rounded-full !bg-transparent text-passive hover:!bg-interactive-hover focus:!bg-transparent focus-visible:!bg-interactive-hover active:!bg-interactive-hover data-[state=open]:!bg-interactive-hover hover:text-foreground focus-visible:text-foreground disabled:pointer-events-none disabled:opacity-50 data-[state=open]:text-foreground [&_svg]:size-icon-md";
 const HOVER_ACTION_CLASS = ROW_ACTION_BUTTON_CLASS;
 const SESSION_ACTION_CLASS = ROW_ACTION_BUTTON_CLASS;
 

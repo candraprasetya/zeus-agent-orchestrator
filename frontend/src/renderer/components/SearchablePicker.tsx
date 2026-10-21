@@ -1,4 +1,4 @@
-import { Check, ChevronDown, Lock, Plus, Search } from "lucide-react";
+import { Check, ChevronDown, Lock, Plus, Search } from "@/icons/hugeicons-adapter";
 import { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { cn } from "../lib/utils";

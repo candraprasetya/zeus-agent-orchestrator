@@ -13,7 +13,7 @@
 
 import { useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
-import { ChevronRight, Loader2 } from "lucide-react";
+import { ChevronRight, Loader2 } from "@/icons/hugeicons-adapter";
 import { cn } from "../../lib/utils";
 import { ActivityRow, ActivityTransition } from "./ChatTimelineItems";
 import {

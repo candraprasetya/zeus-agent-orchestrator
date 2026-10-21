@@ -1,4 +1,4 @@
-import { QrCode } from "lucide-react";
+import { QrCode } from "@/icons/hugeicons-adapter";
 import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { aoBridge } from "../../lib/bridge";

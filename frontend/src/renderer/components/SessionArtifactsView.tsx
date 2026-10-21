@@ -2,7 +2,7 @@ import { useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode }
 import { createPortal } from "react-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
-import { ChevronDown, ChevronLeft, Copy, FileText, FolderOpen, Globe, Maximize2, Minimize2, SquareTerminal, Trash2 } from "lucide-react";
+import { ChevronDown, ChevronLeft, Copy, FileText, FolderOpen, Globe, Maximize2, Minimize2, SquareTerminal, Trash2 } from "@/icons/hugeicons-adapter";
 import type { OpenArtifactsTargetId } from "../../shared/editor-handoff";
 import { useOpenSessionArtifacts } from "../hooks/useEditorHandoff";
 import { useRestoreArtifactVersion } from "../hooks/useArtifactVersions";

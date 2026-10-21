@@ -1,4 +1,4 @@
-import { Check, Keyboard, Pencil, Plus, RotateCcw, Search, X } from "lucide-react";
+import { Check, Keyboard, Pencil, Plus, RotateCcw, Search, X } from "@/icons/hugeicons-adapter";
 import { useTranslation } from "react-i18next";
 import type { TFunction } from "i18next";
 import { shortcutCategoryLabelKeys, shortcutLabelKeys } from "../../i18n/key-maps";
@@ -449,7 +449,7 @@ export const KeyboardShortcutsSettingsDialog = memo(function KeyboardShortcutsSe
 						{confirmResetAll ? (
 							<>
 								<span className="mr-auto text-caption text-settings-muted">{t("shortcut.resetAllConfirm")}</span>
-								<Button type="button" variant="footer" className="rounded-md" onClick={() => setConfirmResetAll(false)}>
+								<Button type="button" variant="footer" className="rounded-full" onClick={() => setConfirmResetAll(false)}>
 									{t("confirm.cancel")}
 								</Button>
 								<Button

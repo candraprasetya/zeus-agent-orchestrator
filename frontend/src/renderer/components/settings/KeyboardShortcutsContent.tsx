@@ -1,4 +1,4 @@
-import { Check, Keyboard, Pencil, Plus, RotateCcw, X } from "lucide-react";
+import { Check, Keyboard, Pencil, Plus, RotateCcw, X } from "@/icons/hugeicons-adapter";
 import { useTranslation } from "react-i18next";
 import type { TFunction } from "i18next";
 import { shortcutCategoryLabelKeys, shortcutLabelKeys } from "../../i18n/key-maps";

@@ -45,7 +45,7 @@
 	--chart-3: oklch(0.48 0 0);
 	--chart-4: oklch(0.4 0 0);
 	--chart-5: oklch(0.29 0 0);
-	--radius: 0.625rem;
+	--radius: 0.875rem;
 	--sidebar: oklch(0.180 0.002 250);
 	--sidebar-foreground: oklch(0.970 0.002 250);
 	--sidebar-primary: oklch(0.900 0.002 250);
@@ -145,7 +145,7 @@
 	   TYPOGRAPHY
 	   ═══════════════════════════════════════════════════════════════ */
 
-	--font-family-base: "Geist Variable", "Geist", ui-sans-serif, system-ui, sans-serif;
+	--font-family-base: "Google Sans Variable", "Google Sans", system-ui, sans-serif;
 	--font-family-mono:
 		"Geist Mono Variable", "Geist Mono", "JetBrainsMono Nerd Font Mono", "JetBrainsMono Nerd Font",
 		"FiraCode Nerd Font Mono", "FiraCode Nerd Font", "MesloLGS NF", ui-monospace, SFMono-Regular, Menlo, Monaco,
@@ -238,13 +238,16 @@
 	   RADIUS
 	   ═══════════════════════════════════════════════════════════════ */
 
-	--radius-xs: calc(var(--radius) * 0.4);
-	--radius-sm: calc(var(--radius) * 0.6);
-	--radius-md: calc(var(--radius) * 0.8);
+	--radius-xs: calc(var(--radius) * 0.43);
+	--radius-sm: calc(var(--radius) * 0.64);
+	--radius-md: calc(var(--radius) * 0.86);
 	--radius-lg: var(--radius);
-	--radius-panel: calc(var(--radius) * 1.4);
+	--radius-xl: calc(var(--radius) * 1.28);
+	--radius-2xl: calc(var(--radius) * 1.57);
+	--radius-3xl: calc(var(--radius) * 1.85);
+	--radius-panel: calc(var(--radius) * 1.43);
 	--radius-full: 999px; /* pills, avatars, status dots */
-	--radius-swatch: 2px; /* board lane squares: square-reading, not a dot */
+	--radius-swatch: 4px; /* board lane squares: square-reading, not a dot */
 
 	/* ═══════════════════════════════════════════════════════════════
 	   BREAKPOINTS — documented here; @media cannot use var()
@@ -296,7 +299,7 @@
 	--space-topbar-x: 10px;
 	--space-topbar-zone: 10px;
 	--space-topbar-group: 4px;
-	--radius-topbar-control: 7px;
+	--radius-topbar-control: 10px;
 	--size-row-md: 52px;
 	--size-browser-url: 29px;
 	--size-browser-min: 320px;
@@ -379,8 +382,8 @@
 	--color-text-command-item: var(--foreground);
 	--color-text-command-placeholder: var(--muted-foreground);
 	--color-text-command-muted: var(--muted-foreground);
-	--radius-command-palette: 12px;
-	--radius-command-item: 6px;
+	--radius-command-palette: 18px;
+	--radius-command-item: 8px;
 	--shadow-command-palette: var(--elevation-xl);
 	--shadow-popover: var(--elevation-xl);
 	--size-command-palette: 720px;
@@ -408,7 +411,7 @@
 	--size-center-panel-inset-mac: 6px;
 	/* Formula: inner = outer_window_radius - inset (nested corner alignment).
 	 * macOS window corner ≈ 18px; inset = 6px → inner = 12px. */
-	--radius-window: 18px;
+	--radius-window: 22px;
 	--radius-center-panel: calc(var(--radius-window) - var(--size-center-panel-inset-mac));
 
 	/* Welcome / import radius alias (CreateProjectFlow rounded-welcome-panel) */
@@ -429,7 +432,7 @@
 	--size-import-folder-dialog: 640px;
 	--size-composer-prompt-min: 112px;
 	--size-composer-start-button: 7.25rem;
-	--radius-chat-composer: 20px;
+	--radius-chat-composer: 24px;
 	/* Task composer — inline toolbar values. Quieter than a filled control at rest
 	 * so the task field stays the only thing with visual weight. */
 	--color-bg-composer-chip: color-mix(in oklab, var(--input) 55%, transparent);
@@ -456,8 +459,8 @@
 	--tracking-settings-title: -0.015em;
 	--tracking-settings-section: 0.06em;
 	--tracking-settings-mono: 0.08em;
-	--radius-settings-panel: 14px;
-	--radius-settings-row: 16px;
+	--radius-settings-panel: 20px;
+	--radius-settings-row: 18px;
 	--size-settings-row: 52px;
 	--size-settings-section-gap: 40px;
 	--size-settings-section-inner-gap: 12px;
@@ -512,8 +515,8 @@
 	--leading-settings-mobile-warning: 15px;
 	--size-settings-action-height: 38px;
 	--size-composer-toolbar-height: var(--size-control-form);
-	--radius-settings-action: 16px;
-	--radius-settings-dialog-lg: 24px;
+	--radius-settings-action: var(--radius-full);
+	--radius-settings-dialog-lg: 28px;
 	--shadow-settings-dialog: var(--elevation-xl);
 	--shadow-settings-qr: var(--elevation-md);
 
@@ -643,7 +646,7 @@
    before first paint; the Nerd Font entries stay as per-glyph fallbacks for
    terminal powerline and file-type icons. */
 :root[data-ao-platform="darwin"] {
-	--font-family-base: -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+	--font-family-base: "Google Sans Variable", "Google Sans", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
 	--font-family-mono:
 		"SF Mono", SFMono-Regular, ui-monospace, "JetBrainsMono Nerd Font Mono", "JetBrainsMono Nerd Font",
 		"FiraCode Nerd Font Mono", "FiraCode Nerd Font", "MesloLGS NF", Menlo, monospace;

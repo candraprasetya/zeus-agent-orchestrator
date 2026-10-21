@@ -1,4 +1,4 @@
-import { SquareTerminal, X } from "lucide-react";
+import { SquareTerminal, X } from "@/icons/hugeicons-adapter";
 import { type KeyboardEvent, type MouseEvent, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useTruncatedText } from "../hooks/useTruncatedText";

@@ -12,7 +12,7 @@ import {
 import { useVirtualizer } from "@tanstack/react-virtual";
 import type { TFunction } from "i18next";
 import { useTranslation } from "react-i18next";
-import { Check, LoaderCircle, Plus, Send as SendIcon } from "lucide-react";
+import { Check, LoaderCircle, Plus, Send as SendIcon } from "@/icons/hugeicons-adapter";
 import type { FileAnnotationTarget } from "../../shared/file-annotations";
 import {
 	type WorkspaceCompareMode,

@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, type ComponentProps, type ReactNode } from "react";
-import { Copy, ExternalLink, FileText, Globe } from "lucide-react";
+import { Copy, ExternalLink, FileText, Globe } from "@/icons/hugeicons-adapter";
 import { useTranslation } from "react-i18next";
 import { aoBridge } from "../lib/bridge";
 import { isWebLink, openLinkInSystemBrowser } from "../lib/external-link-policy";

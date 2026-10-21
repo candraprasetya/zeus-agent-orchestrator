@@ -1,5 +1,5 @@
 import type { TFunction } from "i18next";
-import { Check } from "lucide-react";
+import { Check } from "@/icons/hugeicons-adapter";
 import { useTranslation } from "react-i18next";
 import { cn } from "../../lib/utils";
 import { OptionMenu, OptionMenuContent, OptionMenuItem, OptionMenuTrigger } from "../ui/option-menu";

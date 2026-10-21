@@ -61,7 +61,7 @@ import {
 	Trash2,
 	UserRound,
 	X,
-} from "lucide-react";
+} from "@/icons/hugeicons-adapter";
 import { apiErrorMessage } from "../lib/api-client";
 import { clientForSessionHost } from "../lib/host-clients";
 import { useBrowserView, type BrowserViewModel } from "../hooks/useBrowserView";

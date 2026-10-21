@@ -1,5 +1,5 @@
 import { RadioGroup } from "radix-ui";
-import { Check, Copy, XCircle } from "lucide-react";
+import { Check, Copy, XCircle } from "@/icons/hugeicons-adapter";
 import type { TFunction } from "i18next";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";

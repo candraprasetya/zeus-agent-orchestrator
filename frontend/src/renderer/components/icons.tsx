@@ -1,61 +1,19 @@
 import type { SVGProps } from "react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+	CodeSquareIcon,
+	HierarchyIcon,
+	AppleIcon,
+} from "@hugeicons/core-free-icons";
 
-// Codex mark: a rounded terminal tile holding a `<` prompt and a caret bar,
-// drawn monochrome in lucide's 24x24 stroke style so it inherits color/size
-// from the slot it sits in (unlike the full-color brand logo, which carries a
-// white background chip and a gradient that won't theme against our surfaces).
+// Codex mark: HugeIcons CodeSquareIcon
 export function CodexIcon({ className, ...props }: SVGProps<SVGSVGElement>) {
-	return (
-		<svg
-			xmlns="http://www.w3.org/2000/svg"
-			width="24"
-			height="24"
-			viewBox="0 0 24 24"
-			fill="none"
-			stroke="currentColor"
-			strokeWidth="2"
-			strokeLinecap="round"
-			strokeLinejoin="round"
-			className={className}
-			{...props}
-		>
-			<rect x="3" y="3" width="18" height="18" rx="5" />
-			<path d="M10.5 9.5 8 12l2.5 2.5" />
-			<path d="M13.5 14.5H16" />
-		</svg>
-	);
+	return <HugeiconsIcon icon={CodeSquareIcon} className={className} size={24} {...(props as any)} />;
 }
 
-// Orchestrator mark: a parent node fanning out to three child nodes, drawn in
-// lucide's 24x24 stroke style so it drops into the same slots as the lucide
-// icons (size comes from `className`/the parent's `[&_svg]:size-*`). Lucide has
-// no 1-parent / 3-child hierarchy glyph, so we author this one to match the
-// org-chart icon called for in the design.
+// Orchestrator mark: HugeIcons HierarchyIcon
 export function OrchestratorIcon({ className, ...props }: SVGProps<SVGSVGElement>) {
-	return (
-		<svg
-			xmlns="http://www.w3.org/2000/svg"
-			width="24"
-			height="24"
-			viewBox="0 0 24 24"
-			fill="none"
-			stroke="currentColor"
-			strokeWidth="2"
-			strokeLinecap="round"
-			strokeLinejoin="round"
-			className={className}
-			{...props}
-		>
-			<circle cx="12" cy="4" r="2" />
-			<circle cx="5" cy="20" r="2" />
-			<circle cx="12" cy="20" r="2" />
-			<circle cx="19" cy="20" r="2" />
-			<path d="M12 6v12" />
-			<path d="M5 11h14" />
-			<path d="M5 11v7" />
-			<path d="M19 11v7" />
-		</svg>
-	);
+	return <HugeiconsIcon icon={HierarchyIcon} className={className} size={24} {...(props as any)} />;
 }
 
 // VS Code's ribbon mark, drawn as a filled 24x24 glyph so it sits in the same
@@ -158,15 +116,9 @@ export function AntigravityIcon(props: SVGProps<SVGSVGElement>) {
 	return <BrandGlyph d={ANTIGRAVITY_PATH} viewBox="0 0 180 180" {...props} />;
 }
 
-// Compact Finder face, kept as SVG so it sizes exactly like the other menu icons.
+// Finder / macOS mark: HugeIcons AppleIcon
 export function FinderIcon(props: SVGProps<SVGSVGElement>) {
-	return (
-		<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" {...props}>
-			<rect x="2" y="2" width="20" height="20" rx="3" fill="#58B9F5" />
-			<path d="M13 2h6a3 3 0 0 1 3 3v14a3 3 0 0 1-3 3h-6v-9h-3l3-11Z" fill="#DDEFFD" />
-			<path d="M7 7v3m10-3v3M6 15c3 3 9 3 12 0" stroke="#183D64" strokeWidth="1.5" strokeLinecap="round" />
-		</svg>
-	);
+	return <HugeiconsIcon icon={AppleIcon} size={24} {...(props as any)} />;
 }
 
 // Ghostty mark from Simple Icons (CC0). Always use this mark: macOS can return

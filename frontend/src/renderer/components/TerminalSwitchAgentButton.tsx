@@ -1,5 +1,5 @@
 import { useQueryClient } from "@tanstack/react-query";
-import { LoaderCircle, Repeat2, TriangleAlert } from "lucide-react";
+import { LoaderCircle, Repeat2, TriangleAlert } from "@/icons/hugeicons-adapter";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { clearSwitchAgentState } from "../hooks/useSwitchAgent";

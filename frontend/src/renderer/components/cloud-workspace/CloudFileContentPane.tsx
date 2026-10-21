@@ -1,7 +1,7 @@
 import { Editor, type EditorFactory } from "@pierre/diffs/edit";
 import { EditProvider } from "@pierre/diffs/react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { LoaderCircle, MessageSquarePlus, Pencil, Save, X } from "lucide-react";
+import { LoaderCircle, MessageSquarePlus, Pencil, Save, X } from "@/icons/hugeicons-adapter";
 import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { cloudWorkspaceReviewFileQueryOptions, cloudWorkspaceReviewQueryKey, cloudWorkspaceReviewRevisionQueryOptions } from "../../hooks/useCloudWorkspaceReview";

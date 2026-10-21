@@ -1,5 +1,5 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { LoaderCircle, Repeat2, TriangleAlert, X } from "lucide-react";
+import { LoaderCircle, Repeat2, TriangleAlert, X } from "@/icons/hugeicons-adapter";
 import { type FormEvent, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import type { components } from "../../api/schema";

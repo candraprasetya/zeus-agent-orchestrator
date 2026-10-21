@@ -18,7 +18,7 @@
  */
 
 import { Fragment, useMemo, useState, type FocusEvent, type ReactNode } from "react";
-import { ChevronDown, Shuffle } from "lucide-react";
+import { ChevronDown, Shuffle } from "@/icons/hugeicons-adapter";
 import { useTranslation } from "react-i18next";
 import {
 	OptionMenu,

@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import { X } from "lucide-react";
+import { X } from "@/icons/hugeicons-adapter";
 import { useTranslation } from "react-i18next";
 import { cn } from "@/lib/utils";
 import { useRestoreFocusOnClose } from "../hooks/useRestoreFocusOnClose";
@@ -64,7 +64,7 @@ export function ConfirmDialog({
 	// frame (575px, 38px footer pills) reads oversized around one question, so
 	// the confirm narrows the dialog and compacts the buttons while keeping the
 	// settings family's colors, borders, and typography.
-	const compactButtonClass = "h-8 rounded-[10px] px-4 text-sm";
+	const compactButtonClass = "h-8 rounded-full px-4 text-sm";
 	return (
 		<Dialog open={open} onOpenChange={(next) => { if (busy && !next) return; onOpenChange(next); }}>
 			<DialogContent

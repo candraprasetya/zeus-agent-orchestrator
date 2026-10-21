@@ -14,7 +14,7 @@
  */
 
 import { memo, useState } from "react";
-import { Check, ListChecks, Loader2 } from "lucide-react";
+import { Check, ListChecks, Loader2 } from "@/icons/hugeicons-adapter";
 import { cn } from "../../lib/utils";
 import type { ConversationPlan, PlanStepStatus } from "../../types/conversation";
 

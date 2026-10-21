@@ -13,7 +13,7 @@ import {
 	type BoardUsagePresentation,
 	type ProductUITranslator,
 } from "@aoagents/product-ui";
-import { Archive, Check, Copy, File, GitBranch, LoaderCircle, RotateCcw } from "lucide-react";
+import { Archive, Check, Copy, File, GitBranch, LoaderCircle, RotateCcw } from "@/icons/hugeicons-adapter";
 import type { MessageKey } from "../i18n";
 import { aoBridge } from "../lib/bridge";
 import { sessionBranchPresentation } from "../lib/session-branch";

@@ -14,7 +14,7 @@ import type { MessageKey } from "../i18n/messages";
 import { useCommandPaletteEnabled } from "../hooks/useCommandPaletteEnabled";
 import { useRestoreFocusOnClose } from "../hooks/useRestoreFocusOnClose";
 import { useKeybindingsStore } from "../stores/keybindings-store";
-import { X } from "lucide-react";
+import { X } from "@/icons/hugeicons-adapter";
 import { cn } from "@/lib/utils";
 import {
 	Dialog,

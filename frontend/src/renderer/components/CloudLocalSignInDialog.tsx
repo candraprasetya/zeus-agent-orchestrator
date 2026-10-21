@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { X } from "lucide-react";
+import { X } from "@/icons/hugeicons-adapter";
 import { useTranslation } from "react-i18next";
 import {
 	centeredOnboardingDialogClass,

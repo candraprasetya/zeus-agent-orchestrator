@@ -1,4 +1,4 @@
-import { FolderOpen, Sparkles, Terminal } from "lucide-react";
+import { FolderOpen, Sparkles, Terminal } from "@/icons/hugeicons-adapter";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useImportSkills, useSkills } from "../../hooks/useSkills";
@@ -42,7 +42,7 @@ export function SkillsSection({ titleHidden }: { titleHidden?: boolean }) {
 						type="button"
 						onClick={() => void handleChooseAndImport()}
 						disabled={isImporting}
-						className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium bg-primary text-primary-foreground rounded hover:opacity-90 disabled:opacity-50 transition"
+						className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-medium bg-primary text-primary-foreground rounded-full hover:opacity-90 disabled:opacity-50 transition shadow-sm"
 					>
 						<FolderOpen className="w-3.5 h-3.5" />
 						{isImporting
@@ -85,8 +85,8 @@ export function SkillsSection({ titleHidden }: { titleHidden?: boolean }) {
 				) : (
 					<div className="divide-y divide-border">
 						{skills.map((skill) => (
-							<div key={skill.name} className="p-3 flex items-start gap-3">
-								<div className="p-1.5 rounded-md bg-secondary text-secondary-foreground mt-0.5">
+							<div key={skill.name} className="p-3.5 flex items-start gap-3">
+								<div className="p-2 rounded-full bg-secondary text-secondary-foreground mt-0.5 shrink-0">
 									<Sparkles className="w-4 h-4 text-amber-500" />
 								</div>
 								<div className="flex-1 min-w-0">
@@ -95,7 +95,7 @@ export function SkillsSection({ titleHidden }: { titleHidden?: boolean }) {
 											{skill.name}
 										</span>
 										{skill.category && (
-											<span className="px-1.5 py-0.5 text-[10px] rounded bg-muted text-muted-foreground uppercase font-medium">
+											<span className="px-2 py-0.5 text-[10px] rounded-full bg-muted text-muted-foreground uppercase font-medium">
 												{skill.category}
 											</span>
 										)}

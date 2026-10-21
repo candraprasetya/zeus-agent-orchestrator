@@ -5,7 +5,7 @@ import {
 	SquareTerminal,
 	TriangleAlert,
 	X,
-} from "lucide-react";
+} from "@/icons/hugeicons-adapter";
 import type { ReactNode } from "react";
 import type {
 	SessionInterfaceMode,

@@ -1,5 +1,5 @@
 import { useEffect, useId, useRef, useState, type KeyboardEvent } from "react";
-import { ArrowUp, Loader2, X } from "lucide-react";
+import { ArrowUp, Loader2, X } from "@/icons/hugeicons-adapter";
 import { useTranslation } from "react-i18next";
 import type { ConversationContentSummary } from "../../types/conversation";
 import { cn } from "../../lib/utils";

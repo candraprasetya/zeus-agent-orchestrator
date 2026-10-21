@@ -12,7 +12,7 @@ import {
 	Minimize2,
 	Rows3,
 	Search,
-} from "lucide-react";
+} from "@/icons/hugeicons-adapter";
 import {
 	sessionSourceFilesQueryOptions,
 	sessionSourceFileQueryOptions,

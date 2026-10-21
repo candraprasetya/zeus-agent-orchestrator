@@ -1,5 +1,6 @@
 import { ipcRenderer } from "electron";
 import { animate } from "motion";
+import googleSansLatinWoff2 from "@fontsource-variable/google-sans/files/google-sans-latin-wght-normal.woff2?inline";
 import geistLatinWoff2 from "@fontsource-variable/geist/files/geist-latin-wght-normal.woff2?inline";
 import geistMonoLatinWoff2 from "@fontsource-variable/geist-mono/files/geist-mono-latin-wght-normal.woff2?inline";
 import {
@@ -1423,9 +1424,10 @@ function decodeBase64Font(dataUri: string): ArrayBuffer {
 function registerFonts(root: ShadowRoot): void {
 	if (typeof FontFace === "undefined") return;
 	const set = (root as ShadowRoot & { fonts?: FontFaceSet }).fonts ?? document.fonts;
+	const googleSans = new FontFace("Google Sans Variable", decodeBase64Font(googleSansLatinWoff2), { weight: "100 900" });
 	const sans = new FontFace("Geist Variable", decodeBase64Font(geistLatinWoff2), { weight: "100 900" });
 	const mono = new FontFace("Geist Mono Variable", decodeBase64Font(geistMonoLatinWoff2), { weight: "100 900" });
-	set.add(sans); set.add(mono); void sans.load(); void mono.load();
+	set.add(googleSans); set.add(sans); set.add(mono); void googleSans.load(); void sans.load(); void mono.load();
 }
 
 function ensureOverlay(): ShadowRoot {
@@ -1471,7 +1473,7 @@ function overlayStyles(): string {
 		/* The adjustment panel and its rules are offset from their box by the
 		   divider gap plus its hairline; sizing maths has to subtract both. */
 		--panel-chrome:calc(var(--gap) + 1px);
-		font-family:"Geist Variable",system-ui,sans-serif;
+		font-family:"Google Sans Variable","Google Sans","Geist Variable",system-ui,sans-serif;
 		color:var(--fg);
 	}
 		.hover{
@@ -1483,13 +1485,13 @@ function overlayStyles(): string {
 		.marker{
 			position:fixed;width:20px;height:20px;border:2px solid var(--bg);border-radius:50%;
 			background:#74b98a;color:#101512;padding:0;
-			font:600 10px/1 "Geist Variable",system-ui,sans-serif;font-variant-numeric:tabular-nums;
+			font:600 10px/1 "Google Sans Variable","Google Sans","Geist Variable",system-ui,sans-serif;font-variant-numeric:tabular-nums;
 			pointer-events:auto;box-shadow:0 2px 8px rgba(0,0,0,.28);cursor:pointer;
 		}
 		button{
 			display:inline-flex;height:var(--control);align-items:center;justify-content:center;
 			border:1px solid transparent;border-radius:var(--radius);background:var(--muted);color:var(--fg);
-			padding:0 10px;font:400 12px/1 "Geist Variable",system-ui,sans-serif;cursor:pointer;
+			padding:0 10px;font:400 12px/1 "Google Sans Variable","Google Sans","Geist Variable",system-ui,sans-serif;cursor:pointer;
 			transition:background-color 120ms ease,border-color 120ms ease,color 120ms ease,opacity 120ms ease;
 		}
 		button:hover{background:color-mix(in oklch,var(--muted) 88%,var(--fg))}

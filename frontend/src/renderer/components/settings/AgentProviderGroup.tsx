@@ -1,4 +1,4 @@
-import { ChevronDown } from "lucide-react";
+import { ChevronDown } from "@/icons/hugeicons-adapter";
 import { useId, type ReactNode } from "react";
 import { AgentAvatar } from "../AgentAvatar";
 

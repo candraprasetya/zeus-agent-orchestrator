@@ -1,4 +1,4 @@
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "@/icons/hugeicons-adapter";
 import { useTranslation } from "react-i18next";
 import type { ConversationBranchPoint } from "../../types/conversation";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";

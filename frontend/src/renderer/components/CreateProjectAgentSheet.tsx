@@ -7,7 +7,7 @@ import { useUiStore } from "../stores/ui-store";
 import { useTranslation } from "react-i18next";
 import * as Dialog from "@radix-ui/react-dialog";
 import { useQuery } from "@tanstack/react-query";
-import { ChevronLeft, TriangleAlert, X, type LucideIcon } from "lucide-react";
+import { ChevronLeft, TriangleAlert, X, type LucideIcon } from "@/icons/hugeicons-adapter";
 import { memo, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import type { components } from "../../api/schema";
 import { useAgentReadinessQuery, useEnsureAgentReadiness } from "../hooks/useAgentReadinessQuery";

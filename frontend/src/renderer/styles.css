@@ -1,7 +1,7 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "../styles/tokens.css";
-@import "@fontsource-variable/geist";
+@import "@fontsource-variable/google-sans";
 @import "@fontsource-variable/geist-mono";
 @source "../../../packages/product-ui/src";
 
@@ -63,6 +63,9 @@
 	--radius-sm: var(--radius-sm);
 	--radius-md: var(--radius-md);
 	--radius-lg: var(--radius-lg);
+	--radius-xl: var(--radius-xl);
+	--radius-2xl: var(--radius-2xl);
+	--radius-3xl: var(--radius-3xl);
 	--radius-panel: var(--radius-panel);
 	--radius-welcome-panel: var(--radius-welcome-panel);
 	--radius-agents-sheet: var(--radius-agents-sheet);
@@ -793,7 +796,7 @@ html[data-ao-platform="darwin"] .settings-dialog-body :is(button, a, input, sele
  * step off the page groups it. Hairline dividers separate the items. */
 .settings-grouped-rows {
 	overflow: hidden;
-	border-radius: var(--radius-md);
+	border-radius: var(--radius-settings-panel);
 	background-color: var(--color-bg-secondary);
 	padding-block: var(--space-1);
 }
@@ -3614,7 +3617,7 @@ html.sidebar-reordering * {
 	width: 34px;
 	height: 34px;
 	place-items: center;
-	border-radius: 7px;
+	border-radius: var(--radius-full);
 	color: var(--fg-muted);
 	transition:
 		background 0.12s ease,
@@ -3631,7 +3634,7 @@ html.sidebar-reordering * {
 	height: 30px;
 	align-items: center;
 	gap: 5px;
-	border-radius: 6px;
+	border-radius: var(--radius-full);
 	border: 1px solid color-mix(in srgb, var(--red) 58%, transparent);
 	background: color-mix(in srgb, var(--red) 5%, transparent);
 	padding: 0 10px;
@@ -3660,7 +3663,7 @@ html.sidebar-reordering * {
 	height: 34px;
 	align-items: center;
 	gap: 6px;
-	border-radius: 7px;
+	border-radius: var(--radius-full);
 	border: 1px solid color-mix(in srgb, var(--red) 40%, transparent);
 	padding: 0 12px;
 	font-size: 13px;
@@ -3683,7 +3686,7 @@ html.sidebar-reordering * {
 	display: inline-flex;
 	height: 34px;
 	align-items: center;
-	border-radius: 7px;
+	border-radius: var(--radius-full);
 	padding: 0 10px;
 	font-size: 13px;
 	font-weight: 600;
@@ -3706,7 +3709,7 @@ html.sidebar-reordering * {
 	height: 34px;
 	align-items: center;
 	gap: 6px;
-	border-radius: 7px;
+	border-radius: var(--radius-full);
 	padding: 0 15px;
 	font-size: 13px;
 	font-weight: 600;
@@ -3726,7 +3729,7 @@ html.sidebar-reordering * {
 
 .dashboard-app-header__primary-btn--compact {
 	height: 32px;
-	border-radius: 7px;
+	border-radius: var(--radius-full);
 	padding: 0 14px;
 	font-size: 13px;
 }
@@ -3736,7 +3739,7 @@ html.sidebar-reordering * {
 	height: 34px;
 	align-items: center;
 	gap: 6px;
-	border-radius: 7px;
+	border-radius: var(--radius-full);
 	border: 1px solid var(--border);
 	padding: 0 15px;
 	font-size: 13px;
@@ -3781,7 +3784,7 @@ html.sidebar-reordering * {
 	place-items: center;
 	width: 28px;
 	height: 28px;
-	border-radius: 6px;
+	border-radius: var(--radius-sm);
 	color: var(--fg-muted);
 	-webkit-app-region: no-drag;
 	transition:
@@ -3819,7 +3822,7 @@ html.sidebar-reordering * {
 .window-titlebar__menu-btn {
 	height: 24px;
 	padding: 0 8px;
-	border-radius: 6px;
+	border-radius: var(--radius-sm);
 	font-size: 12.5px;
 	line-height: 1;
 	color: var(--fg-muted);
@@ -3911,7 +3914,7 @@ html.sidebar-reordering * {
 	align-items: center;
 	gap: 4px;
 	border: 1px solid var(--border);
-	border-radius: 6px;
+	border-radius: var(--radius-full);
 	padding: 0 8px;
 	font-size: 10px;
 	font-weight: 600;
@@ -3971,7 +3974,7 @@ html.sidebar-reordering * {
 	gap: 6px;
 	min-width: 0;
 	padding: 7px 6px;
-	border-radius: 7px;
+	border-radius: var(--radius-md);
 	font-size: 11.5px;
 	font-weight: 600;
 	color: var(--fg-passive);
@@ -4078,7 +4081,7 @@ html.sidebar-reordering * {
 	flex-shrink: 0;
 	align-items: center;
 	gap: 5px;
-	border-radius: 6px;
+	border-radius: var(--radius-sm);
 	border: 1px solid var(--border);
 	background: var(--bg-1);
 	padding: 0 8px;
@@ -4107,7 +4110,7 @@ html.sidebar-reordering * {
 	flex-shrink: 0;
 	align-items: center;
 	gap: 6px;
-	border-radius: 6px;
+	border-radius: var(--radius-sm);
 	border: 1px solid color-mix(in srgb, var(--green) 34%, transparent);
 	background: color-mix(in srgb, var(--green) 9%, transparent);
 	padding: 0 9px;
@@ -4409,7 +4412,7 @@ html.sidebar-reordering * {
 
 .reviewer-error {
 	margin: 0;
-	border-radius: 6px;
+	border-radius: var(--radius-md);
 	border: 1px solid color-mix(in srgb, var(--red) 28%, transparent);
 	background: color-mix(in srgb, var(--red) 8%, transparent);
 	padding: 8px 10px;
@@ -4420,7 +4423,7 @@ html.sidebar-reordering * {
 
 .reviewer-notice {
 	margin: 0;
-	border-radius: 6px;
+	border-radius: var(--radius-md);
 	border: 1px solid color-mix(in srgb, var(--green) 28%, transparent);
 	background: color-mix(in srgb, var(--green) 8%, transparent);
 	padding: 8px 10px;
@@ -4433,7 +4436,7 @@ html.sidebar-reordering * {
 	display: flex;
 	flex-direction: column;
 	gap: 12px;
-	border-radius: 8px;
+	border-radius: var(--radius-lg);
 	border: 1px solid var(--border);
 	background: var(--bg-1);
 	padding: 12px;
@@ -4505,7 +4508,7 @@ html.sidebar-reordering * {
 	align-items: center;
 	gap: 5px;
 	overflow: hidden;
-	border-radius: 6px;
+	border-radius: var(--radius-full);
 	padding: 0 8px;
 	font-size: 10.5px;
 	font-weight: 650;
@@ -4559,7 +4562,7 @@ html.sidebar-reordering * {
 	justify-content: center;
 	gap: 7px;
 	overflow: hidden;
-	border-radius: 7px;
+	border-radius: var(--radius-full);
 	border: 1px solid var(--border);
 	background: var(--bg-2);
 	padding: 0 10px;
@@ -4611,7 +4614,7 @@ html.sidebar-reordering * {
 	flex-direction: column;
 	gap: 0;
 	overflow: hidden;
-	border-radius: 7px;
+	border-radius: var(--radius-lg);
 	border: 1px solid var(--border);
 	background: color-mix(in srgb, var(--bg-0) 35%, transparent);
 }
@@ -5671,7 +5674,7 @@ body:has(#root .platform-linux) > .files-popout-overlay {
 	flex: none;
 	margin-right: 3px;
 	border: 0;
-	border-radius: 5px;
+	border-radius: var(--radius-sm);
 	color: var(--fg-muted);
 	background: transparent;
 	transition:
@@ -5896,7 +5899,7 @@ body:has(#root .platform-linux) > .files-popout-overlay {
 	margin: 0;
 	padding: 8px 10px;
 	border: 1px solid color-mix(in srgb, var(--red) 35%, transparent);
-	border-radius: 7px;
+	border-radius: var(--radius-md);
 	background: color-mix(in srgb, var(--red) 8%, var(--bg));
 	color: var(--red);
 	font-size: 12px;

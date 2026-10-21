@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { XIcon } from "lucide-react";
+import { XIcon } from "@/icons/hugeicons-adapter";
 import { Dialog as SheetPrimitive } from "radix-ui";
 import { useTranslation } from "react-i18next";
 

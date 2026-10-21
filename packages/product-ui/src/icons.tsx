@@ -15,7 +15,7 @@ function Icon({
 	return (
 		<svg
 			aria-hidden="true"
-			className={cn("lucide", `lucide-${name}`, className)}
+			className={cn("lucide", `lucide-${name}`, "hugeicons", `hugeicons-${name}`, className)}
 			fill="none"
 			height="24"
 			stroke="currentColor"

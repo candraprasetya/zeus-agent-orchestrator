@@ -10,7 +10,7 @@ import {
 	SquarePen,
 	Sun,
 	type LucideIcon,
-} from "lucide-react";
+} from "@/icons/hugeicons-adapter";
 import type { CommandGroupId, CommandItem } from "./command-palette";
 
 /** Exact-id icons for known actions. Add new command ids here as they ship. */

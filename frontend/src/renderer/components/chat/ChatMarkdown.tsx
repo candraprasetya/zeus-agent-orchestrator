@@ -39,7 +39,7 @@ import {
 } from "react";
 import Markdown, { defaultUrlTransform, type Components, type Options } from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { WrapText } from "lucide-react";
+import { WrapText } from "@/icons/hugeicons-adapter";
 import { cn } from "../../lib/utils";
 import { isHostLocalWebLink } from "../../lib/loopback";
 import { canonicalLanguage } from "../../lib/code-highlight";

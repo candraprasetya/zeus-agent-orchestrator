@@ -1,4 +1,4 @@
-import { SquareArrowOutUpRight } from "lucide-react";
+import { SquareArrowOutUpRight } from "@/icons/hugeicons-adapter";
 import { useTranslation } from "react-i18next";
 import { isWebLink, openLinkInSystemBrowser } from "../lib/external-link-policy";
 import { TopbarButton } from "./TopbarButton";

@@ -11,7 +11,7 @@ import {
 	largestSession,
 	type ChipTone,
 } from "@aoagents/product-ui";
-import { AlertTriangle, LayoutDashboard, RotateCw } from "lucide-react";
+import { AlertTriangle, LayoutDashboard, RotateCw } from "@/icons/hugeicons-adapter";
 import {
 	CLOUD_PROJECT_KIND,
 	type WorkspaceSession,

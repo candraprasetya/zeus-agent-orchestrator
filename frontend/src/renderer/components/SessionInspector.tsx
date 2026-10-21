@@ -1,4 +1,4 @@
-import { File, FileText, FolderClosed, MessageSquare } from "lucide-react";
+import { File, FileText, FolderClosed, MessageSquare } from "@/icons/hugeicons-adapter";
 import { AppLink } from "./AppLink";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
@@ -31,11 +31,12 @@ import {
 	GitMerge,
 	Globe,
 	Info,
+	List,
 	Play,
 	Loader2,
 	SearchCheck,
 	X,
-} from "lucide-react";
+} from "@/icons/hugeicons-adapter";
 import type { components } from "../../api/schema";
 import { interfaceTransitionIsActive, useSessionInterfaceTransitionStatus } from "../hooks/useSessionInterfaceTransition";
 import { reviewerConversationQueryKey } from "../hooks/useReviewerConversation";
@@ -120,16 +121,7 @@ const VIEW_DEFS: {
 	{
 		id: "summary",
 		labelKey: "inspector.summary",
-		icon: (
-			<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true">
-				<line x1="8" y1="7" x2="20" y2="7" />
-				<line x1="8" y1="12" x2="20" y2="12" />
-				<line x1="8" y1="17" x2="16" y2="17" />
-				<circle cx="4" cy="7" r="1" />
-				<circle cx="4" cy="12" r="1" />
-				<circle cx="4" cy="17" r="1" />
-			</svg>
-		),
+		icon: <List aria-hidden="true" />,
 	},
 	{
 		id: "reviews",
@@ -139,13 +131,7 @@ const VIEW_DEFS: {
 	{
 		id: "browser",
 		labelKey: "inspector.browser",
-		icon: (
-			<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true">
-				<circle cx="12" cy="12" r="9" />
-				<line x1="3" y1="12" x2="21" y2="12" />
-				<path d="M12 3a14 14 0 0 1 0 18 14 14 0 0 1 0-18" />
-			</svg>
-		),
+		icon: <Globe aria-hidden="true" />,
 	},
 	{ id: "sideChat", labelKey: "inspector.sideChat", icon: <MessageSquare aria-hidden="true" /> },
 	{

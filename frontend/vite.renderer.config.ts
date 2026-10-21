@@ -197,6 +197,9 @@ export default defineConfig({
 	resolve: {
 		alias: {
 			"@": fileURLToPath(new URL("./src/renderer", import.meta.url)),
+			"lucide-react": fileURLToPath(
+				new URL("./src/renderer/icons/hugeicons-adapter.tsx", import.meta.url),
+			),
 			"@aoagents/product-ui": fileURLToPath(
 				new URL("../packages/product-ui/src/index.ts", import.meta.url),
 			),

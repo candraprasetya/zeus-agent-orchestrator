@@ -9,7 +9,7 @@ import {
   PanelLeft,
   Square,
   X,
-} from "lucide-react";
+} from "@/icons/hugeicons-adapter";
 import { useEffect, useState } from "react";
 import { sidebarIsVisible, useUiStore } from "../stores/ui-store";
 import { useCanGoForward } from "./TitlebarNav";

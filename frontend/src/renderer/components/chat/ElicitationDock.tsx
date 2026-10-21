@@ -1,5 +1,5 @@
 import { useId, useMemo, useState, type FormEvent, type ReactNode } from "react";
-import { ExternalLink, Loader2 } from "lucide-react";
+import { ExternalLink, Loader2 } from "@/icons/hugeicons-adapter";
 import { aoBridge } from "../../lib/bridge";
 import { cn } from "../../lib/utils";
 import type { ConversationActivity } from "../../types/conversation";
