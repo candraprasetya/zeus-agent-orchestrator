@@ -5,6 +5,7 @@ import {
   Alert02Icon as _Alert02Icon,
   AlertCircleIcon as _AlertCircleIcon,
   ArchiveIcon as _ArchiveIcon,
+  Attachment01Icon as _Attachment01Icon,
   ArrowDown01Icon as _ArrowDown01Icon,
   ArrowDownIcon as _ArrowDownIcon,
   ArrowDownUp as _ArrowDownUp,
@@ -60,6 +61,7 @@ import {
   FileAddIcon as _FileAddIcon,
   FileCodeIcon as _FileCodeIcon,
   FileIcon as _FileIcon,
+  FlashIcon as _FlashIcon,
   FloppyDiskIcon as _FloppyDiskIcon,
   Folder01Icon as _Folder01Icon,
   Folder02Icon as _Folder02Icon,
@@ -138,6 +140,7 @@ import {
   ServerIcon as _ServerIcon,
   Settings01Icon as _Settings01Icon,
   Settings02Icon as _Settings02Icon,
+  SlidersHorizontalIcon as _SlidersHorizontalIcon,
   SheetIcon as _SheetIcon,
   ShieldAlertIcon as _ShieldAlertIcon,
   ShieldCheckIcon as _ShieldCheckIcon,
@@ -295,6 +298,7 @@ export const Globe = createHugeIcon("globe", _GlobeIcon);
 export const Globe2 = createHugeIcon("globe-2", _Globe02Icon);
 export const GripVertical = createHugeIcon("grip-vertical", _GripVerticalIcon);
 export const GripVerticalIcon = createHugeIcon("grip-vertical", _GripVerticalIcon);
+export const Hand = createHugeIcon("hand", _CursorPointer01Icon);
 export const Heading1 = createHugeIcon("heading-1", _Heading1);
 export const Heading2 = createHugeIcon("heading-2", _Heading2);
 export const Heading3 = createHugeIcon("heading-3", _Heading3);
@@ -316,6 +320,7 @@ export const Link2 = createHugeIcon("link-2", _Link2);
 export const List = createHugeIcon("list", _ListIcon);
 export const ListChecks = createHugeIcon("list-checks", _ListChecksIcon);
 export const ListOrdered = createHugeIcon("list-ordered", _LeftToRightListNumberIcon);
+export const ListTodo = createHugeIcon("list-todo", _ListChecksIcon);
 export const Loader2 = createHugeIcon("loader-2", _Loading01Icon);
 export const LoaderCircle = createHugeIcon("loader-circle", _Loading03Icon);
 export const Lock = createHugeIcon("lock", _LockIcon);
@@ -338,8 +343,10 @@ export const MousePointer2 = createHugeIcon("mouse-pointer-2", _CursorPointer01I
 export const PanelLeft = createHugeIcon("panel-left", _SidebarLeft01Icon);
 export const PanelLeftIcon = createHugeIcon("panel-left", _SidebarLeft01Icon);
 export const PanelRight = createHugeIcon("panel-right", _SidebarRight01Icon);
+export const Paperclip = createHugeIcon("paperclip", _Attachment01Icon);
 export const Pause = createHugeIcon("pause", _PauseIcon);
 export const Pencil = createHugeIcon("pencil", _PencilEdit02Icon);
+export const PencilLine = createHugeIcon("pencil-line", _PencilEdit02Icon);
 export const Pilcrow = createHugeIcon("pilcrow", _PilcrowIcon);
 export const Pin = createHugeIcon("pin", _PinIcon);
 export const PinOff = createHugeIcon("pin-off", _PinIcon);
@@ -364,10 +371,12 @@ export const Server = createHugeIcon("server", _ServerIcon);
 export const Settings = createHugeIcon("settings", _Settings01Icon);
 export const Settings2 = createHugeIcon("settings-2", _Settings02Icon);
 export const Sheet = createHugeIcon("sheet", _SheetIcon);
+export const ShieldAlert = createHugeIcon("shield-alert", _ShieldAlertIcon);
 export const ShieldCheck = createHugeIcon("shield-check", _ShieldCheckIcon);
 export const ShieldQuestion = createHugeIcon("shield-question", _ShieldAlertIcon);
 export const ShieldX = createHugeIcon("shield-x", _ShieldXIcon);
 export const Shuffle = createHugeIcon("shuffle", _ShuffleIcon);
+export const SlidersHorizontal = createHugeIcon("sliders-horizontal", _SlidersHorizontalIcon);
 export const Smartphone = createHugeIcon("smartphone", _SmartphoneIcon);
 export const Sparkles = createHugeIcon("sparkles", _SparklesIcon);
 export const Square = createHugeIcon("square", _SquareIcon);
@@ -394,3 +403,4 @@ export const Wrench = createHugeIcon("wrench", _WrenchIcon);
 export const X = createHugeIcon("x", _XIcon);
 export const XCircle = createHugeIcon("xcircle", _CancelCircleIcon);
 export const XIcon = createHugeIcon("x", _XIcon);
+export const Zap = createHugeIcon("zap", _FlashIcon);

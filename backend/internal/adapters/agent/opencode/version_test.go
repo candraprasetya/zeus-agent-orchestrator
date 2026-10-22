@@ -20,6 +20,9 @@ func versionBinary(t *testing.T, script string) string {
 	if runtime.GOOS == "windows" {
 		t.Skip("POSIX executable fixture")
 	}
+	oldUnixPaths := opencodeUnixPaths
+	opencodeUnixPaths = nil
+	t.Cleanup(func() { opencodeUnixPaths = oldUnixPaths })
 	dir := t.TempDir()
 	path := filepath.Join(dir, "opencode")
 	if err := os.WriteFile(path, []byte("#!/bin/sh\n"+script), 0o755); err != nil {
@@ -186,6 +189,10 @@ func TestResolveBinaryForMajorPrefersMismatchOverEarlierProbeFailure(t *testing.
 	if runtime.GOOS == "windows" {
 		t.Skip("POSIX executable fixture")
 	}
+	oldPaths := opencodeUnixPaths
+	opencodeUnixPaths = nil
+	t.Cleanup(func() { opencodeUnixPaths = oldPaths })
+	t.Setenv("HOME", t.TempDir())
 	broken, mismatch := t.TempDir(), t.TempDir()
 	if err := os.WriteFile(filepath.Join(broken, "opencode"), []byte("#!/bin/sh\nexit 1\n"), 0o755); err != nil {
 		t.Fatal(err)

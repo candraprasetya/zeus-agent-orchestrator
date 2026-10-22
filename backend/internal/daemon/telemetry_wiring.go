@@ -7,7 +7,6 @@ import (
 
 	telemetryadapter "github.com/aoagents/agent-orchestrator/backend/internal/adapters/telemetry"
 	"github.com/aoagents/agent-orchestrator/backend/internal/config"
-	agentswitchobs "github.com/aoagents/agent-orchestrator/backend/internal/observe/agentswitch"
 	"github.com/aoagents/agent-orchestrator/backend/internal/ports"
 	"github.com/aoagents/agent-orchestrator/backend/internal/storage/sqlite"
 )
@@ -33,14 +32,6 @@ var aggregatedEventNames = []string{
 	"ao.cli.usage_errors",
 }
 
-func newAgentSwitchFailureDispatcher(
-	store ports.AgentSwitchFailureOutboxStore,
-	policy agentswitchobs.PolicyCoordinator,
-	observer ports.AgentSwitchFailureObserver,
-	log *slog.Logger,
-) (*agentswitchobs.Dispatcher, error) {
-	return nil, nil
-}
 
 // newTelemetrySink also returns the live telemetry identity (nil when the data
 // dir is unknown), shared with the remote sink so a sign-in or opt-out seen by
