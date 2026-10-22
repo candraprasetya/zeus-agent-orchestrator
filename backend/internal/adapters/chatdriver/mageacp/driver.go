@@ -41,7 +41,7 @@ func configure(_ context.Context, cfg acpdriver.LaunchConfig) ([]string, map[str
 	if err != nil {
 		return nil, nil, err
 	}
-	return []string{"acp"}, map[string]string{"MAGE_CONFIG_CONTENT": content}, nil
+	return []string{"acp", "--pure"}, map[string]string{"MAGE_CONFIG_CONTENT": content}, nil
 }
 
 func sessionOptions(settings ports.ChatTurnSettings) []acpdriver.SessionOption {
